@@ -1,5 +1,8 @@
 #include <isa.h>
 #include <cpu/cpu.h>
+#include <cpu/decode.h>
+#include <cpu/ifetch.h>
+#include <memory/paddr.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
@@ -39,6 +42,63 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args) {
+  // execute one line by default
+  if (args == NULL) {
+    cpu_exec(1);
+  } else {
+    cpu_exec(strtol(args, NULL, 10));
+  }
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    printf("Missing subcommand\n");
+  } else if (strcmp(args, "r") == 0) {
+    isa_reg_display();
+  } else if (strcmp(args, "w") == 0) {
+    ;
+  }
+  else {
+    printf("Unknown subcommand '%s'\n", args);
+  }
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  /* extract the first argument */
+  char *arg = strtok(NULL, " ");
+  int word = 4; // a word is 4 bytes length
+
+  if (arg == NULL) {
+    printf("Missing amount\n");
+  } else {
+    // TODO: only accept hex number for now
+    int expr = strtol(strtok(NULL, " "), NULL, 16);
+    // print the little-endian word in bytes
+    for (int i = 0; i < strtol(arg, NULL, 10); i++) {
+      printf("0x\33[1;37m%016x\33[0m: \33[1;32m", expr + i * word);
+      for (int j = 0; j < word; j++) {
+        printf("%02lx ", (paddr_read(expr + i * 4, 4) >> 8 * j) & 0xff);
+      }
+      // prinit the corresponding disassemble code
+      char str[128];
+      char *str_p = str;
+      Decode d;
+      Decode *s = &d;
+      s->pc = expr + i * word;
+      s->snpc = expr + i * word;
+      s->isa.inst.val = inst_fetch(&s->snpc, 4);
+      int ilen = s->snpc - s->pc;
+      void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+      disassemble(str_p, 128, MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
+      printf("\t\33[1;36m%s\n\33[0m", str);
+    }
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -51,7 +111,9 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  { "si", "Execute next N program lines", cmd_si },
+  { "info", "Display register/watchpoint infomation", cmd_info },
+  { "x", "print N 4-bytes in memory start from EXPR", cmd_x },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
