@@ -1,0 +1,22 @@
+version: "3"
+services:
+  base:
+    image: ysyx
+    container_name: ysyx-workbench-container
+    network_mode: "host"
+    privileged: true
+    hostname: YSYX
+    build:
+      context: .
+      args:
+        http_proxy: http://${HOST_IP}:7890  # HOST_IP is set in env by shell script
+        https_proxy: http://${HOST_IP}:7890
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./:/home/student/ysyx-workbench
+    environment:
+      - XAUTHORITY=/tmp/.docker.xauth
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+    command: tail -F something  # just a command that never ends
