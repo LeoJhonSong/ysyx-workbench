@@ -1,6 +1,7 @@
 *.*
 *
 !*/
+!/configs/*
 !/nemu/*
 !/nexus-am/*
 !/nanos-lite/*
@@ -10,5 +11,8 @@
 !README.md
 !.gitignore
 !init.sh
+!docker-compose-up.sh
+!docker-compose.yaml
+!Dockerfile
 /fceux-am
 /nvboard
