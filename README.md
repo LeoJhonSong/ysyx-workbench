@@ -29,14 +29,7 @@ compiledb make build | ccze -A
 
 ### nemu
 
-首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig)
-
-需要改的配置:
-```yaml
-- Base ISA: riscv64
-- Build Options:
-  - Enable debug information: Yes
-```
+📑 [nemu部分文档](nemu/README.md)
 
 ## 要点
 
