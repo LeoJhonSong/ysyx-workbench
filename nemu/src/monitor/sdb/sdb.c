@@ -80,7 +80,7 @@ static int cmd_x(char *args) {
     for (int i = 0; i < strtol(arg, NULL, 10); i++) {
       printf("0x\33[1;37m%016x\33[0m: \33[1;32m", expr + i * word);
       for (int j = 0; j < word; j++) {
-        printf("%02lx ", (paddr_read(expr + i * 4, 4) >> 8 * j) & 0xff);
+        printf("%02lx ", (vaddr_read(expr + i * 4, 4) >> 8 * j) & 0xff);
       }
       // prinit the corresponding disassemble code
       char str[128];
