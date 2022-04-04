@@ -1,3 +1,4 @@
+NEMU_HOME=$(CURDIR)
 # Sanity check
 ifeq ($(wildcard $(NEMU_HOME)/src/nemu-main.c),)
   $(error NEMU_HOME=$(NEMU_HOME) is not a NEMU repo)
