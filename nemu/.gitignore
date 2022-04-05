@@ -1,6 +1,7 @@
 *.*
 *
 !*/
+!.vscode/*
 !Makefile
 !*.mk
 !*.[cSh]
@@ -10,3 +11,4 @@
 !Kconfig
 include/config
 include/generated
+*.log
