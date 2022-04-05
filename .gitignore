@@ -1,6 +1,7 @@
 *.*
 *
 !*/
+!.vscode/*
 !/configs/*
 !/nemu/*
 !/nexus-am/*
@@ -16,3 +17,4 @@
 !Dockerfile
 /fceux-am
 /nvboard
+*.log

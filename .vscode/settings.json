@@ -1,0 +1,19 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "terminal.integrated.profiles.linux": {
+        "docker": {
+            "path": "docker",
+            "args": [
+                "exec",
+                "-it",
+                "--workdir=/home/student/ysyx-workbench",
+                "ysyx-workbench-container",
+                "zsh"
+            ]
+        },
+        "zsh": {
+            "path": "zsh",
+        }
+    },
+    "terminal.integrated.defaultProfile.linux": "docker"
+}
