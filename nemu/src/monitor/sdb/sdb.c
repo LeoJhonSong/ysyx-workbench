@@ -5,6 +5,7 @@
 #include <memory/paddr.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <stdio.h>
 #include "sdb.h"
 
 static int is_batch_mode = false;
@@ -35,7 +36,6 @@ static int cmd_c(char *args) {
   return 0;
 }
 
-
 static int cmd_q(char *args) {
   // set NEMU state to QUIT, otherwise will return bad exit status by is_exit_status_bad()
   nemu_state.state = NEMU_QUIT;
@@ -59,8 +59,7 @@ static int cmd_info(char *args) {
     isa_reg_display();
   } else if (strcmp(args, "w") == 0) {
     ;
-  }
-  else {
+  } else {
     printf("Unknown subcommand '%s'\n", args);
   }
   return 0;
@@ -72,13 +71,13 @@ static int cmd_x(char *args) {
   int word = 4; // a word is 4 bytes length
 
   if (arg == NULL) {
-    printf("Missing amount\n");
+    printf(ASNI_FMT("Missing amount\n", ASNI_FG_RED));
   } else {
     // TODO: only accept hex number for now
     int expr = strtol(strtok(NULL, " "), NULL, 16);
     // print the little-endian word in bytes
     for (int i = 0; i < strtol(arg, NULL, 10); i++) {
-      printf("0x\33[1;37m%016x\33[0m: \33[1;32m", expr + i * word);
+      printf(ASNI_FG_WHITE "%016x" ASNI_NONE ":" ASNI_FG_GREEN, expr + i * word);
       for (int j = 0; j < word; j++) {
         printf("%02lx ", (vaddr_read(expr + i * 4, 4) >> 8 * j) & 0xff);
       }
@@ -93,7 +92,7 @@ static int cmd_x(char *args) {
       int ilen = s->snpc - s->pc;
       void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
       disassemble(str_p, 128, MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-      printf("\t\33[1;36m%s\n\33[0m", str);
+      printf(ASNI_FMT("\t%s\n", ASNI_FG_CYAN), str);
     }
   }
   return 0;
@@ -104,16 +103,16 @@ static int cmd_help(char *args);
 static struct {
   const char *name;
   const char *description;
-  int (*handler) (char *);
-} cmd_table [] = {
-  { "help", "Display informations about all supported commands", cmd_help },
-  { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
-  { "si", "Execute next N program lines", cmd_si },
-  { "info", "Display register/watchpoint infomation", cmd_info },
-  { "x", "print N 4-bytes in memory start from EXPR", cmd_x },
+  int (*handler)(char *);
+} cmd_table[] = {
+    {"help", "Display informations about all supported commands", cmd_help},
+    {"c", "Continue the execution of the program", cmd_c},
+    {"q", "Exit NEMU", cmd_q},
+    /* TODO: Add more commands */
+    {"si", "Execute next N program lines", cmd_si},
+    {"info", "Display register/watchpoint infomation", cmd_info},
+    {"x", "print N 4-bytes in memory start from EXPR", cmd_x},
+    {"p", "evaluation value of given expression", cmd_p},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -125,18 +124,17 @@ static int cmd_help(char *args) {
 
   if (arg == NULL) {
     /* no argument given */
-    for (i = 0; i < NR_CMD; i ++) {
+    for (i = 0; i < NR_CMD; i++) {
       printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
     }
-  }
-  else {
-    for (i = 0; i < NR_CMD; i ++) {
+  } else {
+    for (i = 0; i < NR_CMD; i++) {
       if (strcmp(arg, cmd_table[i].name) == 0) {
         printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
         return 0;
       }
     }
-    printf("Unknown command '%s'\n", arg);
+    printf(ASNI_FMT("Unknown command '%s'\n", ASNI_FG_RED), arg);
   }
   return 0;
 }
@@ -179,7 +177,9 @@ void sdb_mainloop() {
       }
     }
 
-    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
+    if (i == NR_CMD) {
+      printf(ASNI_FMT("Unknown command '%s'\n", ASNI_FG_RED), cmd);
+    }
   }
 }
 
