@@ -98,6 +98,15 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  bool success;
+  word_t value = expr(args, &success);
+  if (success) {
+    printf("result: " ASNI_FMT("%lu\n", ASNI_FG_GREEN), value);
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {

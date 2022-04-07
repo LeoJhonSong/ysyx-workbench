@@ -27,6 +27,33 @@ sdb: **S**imple **D**e**B**uger
 | 设置监视点   | `w EXPR`      | `w *0x2000`       | 当表达式`EXPR`的值发生变化时, 暂停程序执行                   |
 | 删除监视点   | `d N`         | `d 2`             | 删除序号为`N`的监视点
 
+## 笔记
+
+### 正则
+
+此处正则匹配实现使用的是[POSIX风格](https://www.regular-expressions.info/posix.html)正则表达式 (可以`man 7 regex`查看详细说明), 因为在编译正则表达式时 (在`nemu/src/monitor/sdb/expr.c`的`init_regex()`中) 加了**REG_EXTENDED**标志, 因此确切说使用的是POSIX ERE (Extended Regular Expressions) 风格. 要注意POSIX风格中的字符类概念与其他风格中的字符类并不是同一概念. 其他风格中的[字符类](https://www.regular-expressions.info/charclass.html)是类似`[xz]`的东西, 这在POSIX中称为[括号表达式](https://www.regular-expressions.info/posixbrackets.html). 而POSIX中的[字符类](https://www.regular-expressions.info/posixbrackets.html#Character%20Classes)是在括号表达式里用的: `[xz[:digit:]]`, `[[:alpha:]]`. POSIX风格完全不支持[字符类简写](https://www.regular-expressions.info/shorthand.html), 也完全不支持[前瞻后瞻](https://www.regular-expressions.info/lookaround.html).
+
+💡 Python的re模块使用的是PCRE风格.
+
+#### 关于反斜杠
+
+C中没有原生字符串 (raw string), 因此要匹配元字符本身或者转义字符时使用的字符串实际上需要多加一个`\`. 最极端的例子是匹配`\`, 需要用的字符串为`"\\\\"`. 过程是这样的: `"\\\\"` (字符串) --转义--> `\\` (正则表达式) --转义--> 匹配`\`. 同理, 想匹配`+`就需要字符串`"\\+"`, 而匹配`-`的话因为-不是元字符,就用`"-"`就行.
+
+### 杂
+
+#### used attribute
+
+```c
+static int nr_token __attribute__((used))  = 0;
+static int keep_this(int) __attribute__((used));
+```
+
+> This variable attribute informs the compiler that a static variable is to be retained in the object file, even if it is unreferenced. Static variables marked as used are emitted to a single section, in the order they are declared.
+
+> This function attribute informs the compiler that a static function is to be retained in the object file, even if it is unreferenced. Functions marked with __attribute__((used)) are tagged in the object file to avoid removal by linker unused section removal.
+
+这样一来即便编译器选项设置成有未引用变量/函数就报错, 用了这个属性就能正常保留.
+
 ## Introduction
 
 NEMU(NJU Emulator) is a simple but complete full-system emulator designed for teaching purpose.

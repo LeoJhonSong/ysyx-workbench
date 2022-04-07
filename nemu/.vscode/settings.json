@@ -16,8 +16,11 @@
         }
     },
     "cSpell.words": [
+        "ASNI",
         "menuconfig",
         "NEMU",
+        "PCRE",
+        "snpc",
         "SUBCMD",
         "unprogrammable"
     ],
