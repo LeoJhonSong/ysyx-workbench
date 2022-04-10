@@ -27,6 +27,28 @@ sdb: **S**imple **D**e**B**uger
 | 设置监视点   | `w EXPR`   | `w *0x2000`      | 当表达式`EXPR`的值发生变化时, 暂停程序执行                   |
 | 删除监视点   | `d N`      | `d 2`            | 删除序号为`N`的监视点                                        |
 
+## nemu riscv64的实现
+
+- [官方nemu源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
+
+### 内存
+
+nemu用一个`uint8_t`类型 (也就是一个元素就是一字节) 的大数组`pmem` (在`nemu/src/memory/paddr.c`中定义) 来实现128MB (由`CONFIG_MSIZE`给出) 物理内存, 对于riscv32/64, 物理地址从**0x80000000**开始编址 (由`CONFIG_MBASE`给出), 因此合法物理地址范围为`CONFIG_MBASE` <= paddr < `CONFIG_MBASE + CONFIG_MSIZE`.
+
+客户程序`image` (在`nemu/src/isa/riscv32/init.c`中定义) 被加载至`RESET_VECTOR` (= `CONFIG_MBASE + CONFIG_PC_RESET_OFFSET`), 同时`cpu.pc`被指向此地址. 因为大多数x86_64电脑 (比如我的笔记本) 都是[小端序](https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E5%BA%8F#%E5%B0%8F%E7%AB%AF%E5%BA%8F)的, 与riscv32/64的端序正相同, 因此以`RESET_VECTOR`开始的四条指令来举例的话:
+```sh
+127  inst4 96   inst3  64   inst2  32   inst1   0
+  v         v           v           v           v
+  01 02 b5 03 00 02 b8 23 00 02 b8 23 00 00 02 97
+```
+此时若用`vaddr_read(CONFIG_MBASE, 1)`读取一字节数据, 读到的是**0x97**, 而`vaddr_read(CONFIG_MBASE, 8)`读取一个字 (riscv64的字长为8字节, 即`word_t`类型), 读到的刚好是**0x0002b82300000297**. 因此按字节遍历时打出来的数相对于一个字来说是反的. RISCV32的指令长度是32位, 因此半字半字读.
+
+### 寄存器
+
+riscv64有32个64位寄存器 (在`nemu/src/isa/riscv64/include/isa-def.h`中定义, 实例为`cpu.gpr`), 寄存器名在`nemu/src/isa/riscv64/reg.c`中给出.
+
+- riscv32/64的0号寄存器总是存放0.
+
 ## 笔记
 
 ### 正则
