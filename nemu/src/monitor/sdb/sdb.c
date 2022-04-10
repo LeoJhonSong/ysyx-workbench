@@ -6,7 +6,9 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdio.h>
+#include "common.h"
 #include "sdb.h"
+#include "utils.h"
 
 static int is_batch_mode = false;
 
@@ -74,25 +76,17 @@ static int cmd_x(char *args) {
     ERROR("Missing N, how many words to scan\n");
   } else {
     // TODO: only accept hex number for now
-    int expr = strtol(strtok(NULL, " "), NULL, 16);
-    // print the little-endian word in bytes
+    word_t expr = strtol(strtok(NULL, " "), NULL, 16);
+    printf(">>> starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expr);
+    printf(ASNI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ASNI_DIM));
     for (int i = 0; i < strtol(arg, NULL, 10); i++) {
-      printf(ASNI_FG_WHITE "%016x" ASNI_NONE ":" ASNI_FG_GREEN, expr + i * word);
-      for (int j = 0; j < word; j++) {
-        printf("%02lx ", (vaddr_read(expr + i * 4, 4) >> 8 * j) & 0xff);
+      printf(ASNI_FG_WHITE "%8lx" ASNI_NONE ":", i * sizeof(word_t));
+      // print a word of memory by bytes, high order bytes first
+      for (int j = sizeof(word_t) - 1; j >= 0; j--) {
+        word_t value = vaddr_read(expr + i * 4 + j, 1);
+        printf(" %s%02lx%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_GREEN, value, ASNI_NONE);
       }
-      // prinit the corresponding disassemble code
-      char str[128];
-      char *str_p = str;
-      Decode d;
-      Decode *s = &d;
-      s->pc = expr + i * word;
-      s->snpc = expr + i * word;
-      s->isa.inst.val = inst_fetch(&s->snpc, 4);
-      int ilen = s->snpc - s->pc;
-      void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-      disassemble(str_p, 128, MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-      printf(ASNI_FMT("\t%s\n", ASNI_FG_CYAN), str);
+      printf("\n");
     }
   }
   return 0;

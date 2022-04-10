@@ -27,6 +27,33 @@ sdb: **S**imple **D**e**B**uger
 | 设置监视点   | `w EXPR`   | `w *0x2000`      | 当表达式`EXPR`的值发生变化时, 暂停程序执行                   |
 | 删除监视点   | `d N`      | `d 2`            | 删除序号为`N`的监视点                                        |
 
+表达式求值接受的表达式的BNF定义:
+```sh
+<expr> ::= <decimal-number> # 十进制整数
+  | <hexadecimal-number>    # 以"0x"开头的十六进制整数
+  | <reg_name>              # 以"$"开头
+  | "(" <expr> ")"
+  | <expr> "+" <expr>
+  | <expr> "-" <expr>
+  | <expr> "*" <expr>
+  | <expr> "/" <expr>
+  | <expr> "==" <expr>
+  | <expr> "!=" <expr>
+  | <expr> "&&" <expr>
+  | "*" <expr>              # 指针解引用
+```
+
+## nemu的实现
+
+- [官方nemu源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
+
+### 内存
+
+- nemu实现的是128MB (由`CONFIG_MSIZE`给出) 物理内存`pmem` (在`nemu/src/memory/paddr.c`中定义), 对于riscv32/64, 物理地址从**0x80000000**开始编址 (由`CONFIG_MBASE`给出), 因此合法物理地址范围为`CONFIG_MBASE` <= paddr < `CONFIG_MBASE + CONFIG_MSIZE`.
+- 客户程序`image` (在`nemu/src/isa/riscv32/init.c`中定义) 被加载至`RESET_VECTOR` (= `CONFIG_MBASE + CONFIG_PC_RESET_OFFSET`), 同时`cpu.pc`被指向此地址. 因为大多数x86_64电脑 (比如我的笔记本) 都是[小端序](https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E5%BA%8F#%E5%B0%8F%E7%AB%AF%E5%BA%8F)的, 与riscv32/64的端序正相同, 因此`RESET_VECTOR`开始的:
+  ```
+  ```
+
 ## 笔记
 
 ### 正则
