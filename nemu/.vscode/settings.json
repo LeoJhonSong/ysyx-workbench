@@ -16,7 +16,6 @@
         }
     },
     "cSpell.words": [
-        "ASNI",
         "menuconfig",
         "NEMU",
         "PCRE",
@@ -33,5 +32,4 @@
             ]
         }
     ],
-    "makefile.compileCommandsPath": "./compile_commands.json",
 }

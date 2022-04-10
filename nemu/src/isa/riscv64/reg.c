@@ -1,4 +1,6 @@
 #include <isa.h>
+#include <stdio.h>
+#include "common.h"
 #include "local-include/reg.h"
 
 const char *regs[] = {
@@ -9,26 +11,25 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-  int i;
-  int cols = 4;
-  int size = 4; // each gpr is 4 bytes
-  for (i = 0; i < cols; i++) {
-    printf("\33[1;37mReg     \33[1;32mHex        \33[1;36mDec     \33[0m│ ");
+  int cols = 2;
+  for (int i = 0; i < cols; i++) {
+    printf(" │ %sReg           %sHex                   %sDec         %s", ASNI_FG_NORMAL_WHITE, ASNI_FG_NORMAL_GREEN, ASNI_FG_NORMAL_CYAN, ASNI_NONE);
   }
-  printf("\n");
-  for (i = 0; i < ARRLEN(regs); i++) {
-    // register name in white color and value in green color
-    printf("\33[1;37m%-3s \33[1;32m", regs[i]);
-    for (int j = size - 1; j >= 0; j--) {
-      printf("%02lx ", (cpu.gpr[i] >> 8 * j) & 0xff);
+  printf(" │\n");
+  int n = ARRLEN(regs) / cols;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < cols; j++) {
+      printf(" │ " ASNI_FMT("%-3s", ASNI_FG_NORMAL_WHITE), regs[n * j + i]);
+      // print the hex by bytes
+      word_t value;
+      for (int k = sizeof(cpu.gpr[0]) - 1; k >= 0; k--) {
+        value = (cpu.gpr[n * j + i] >> 8 * k) & 0xff;
+        printf(" %s%02lx%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_GREEN, value, ASNI_NONE);
+      }
+      value = cpu.gpr[n * j + i];
+      printf(" %s%20lu%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_CYAN, value, ASNI_NONE);
     }
-    printf("\33[1;36m%10lu\33[0m │ ", cpu.gpr[i]);
-    if (i % cols == cols - 1) {
-      printf("\n");
-    }
-  }
-  if ((i - 1) % cols != cols - 1) {
-    printf("\n");
+    printf(" │ \n");
   }
 }
 
