@@ -13,7 +13,7 @@
 enum {
   TK_NOTYPE = 256,
   TK_DEC,
-  TK_NEG,  // - for negative sign
+  TK_NEG, // - for negative sign
   TK_EQ,
   /* TODO: Add more token types */
 };
@@ -23,19 +23,19 @@ static struct rule {
   int token_type;
 } rules[] = {
 
-  /* TODO: Add more rules.
-   * Pay attention to the precedence level of different rules.
-   */
+    /* TODO: Add more rules.
+     * Pay attention to the precedence level of different rules.
+     */
 
-  {"[[:blank:]]+", TK_NOTYPE},    // spaces
-  {"[[:digit:]]+", TK_DEC},       // decimal non-negative 32bits int
-  {"\\(", '('},                   // (
-  {"\\)", ')'},                   // )
-  {"==", TK_EQ},                  // equal
-  {"\\+", '+'},                   // plus
-  {"-", '-'},                     // minus
-  {"\\*", '*'},                   // plus
-  {"/", '/'},                     // divide
+    {"[[:blank:]]+", TK_NOTYPE}, // spaces
+    {"[[:digit:]]+", TK_DEC},    // decimal non-negative 32bits int
+    {"\\(", '('},                // (
+    {"\\)", ')'},                // )
+    {"==", TK_EQ},               // equal
+    {"\\+", '+'},                // plus
+    {"-", '-'},                  // minus
+    {"\\*", '*'},                // plus
+    {"/", '/'},                  // divide
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -50,7 +50,7 @@ void init_regex() {
   char error_msg[128];
   int ret;
 
-  for (i = 0; i < NR_REGEX; i ++) {
+  for (i = 0; i < NR_REGEX; i++) {
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
@@ -65,7 +65,7 @@ typedef struct token {
 } Token;
 
 static Token tokens[32] = {};
-static int nr_token = 0;  // amount of tokens detected
+static int nr_token = 0; // amount of tokens detected
 
 static bool make_token(char *e) {
   int position = 0;
@@ -76,7 +76,7 @@ static bool make_token(char *e) {
 
   while (e[position] != '\0') {
     /* Try all rules one by one. */
-    for (i = 0; i < NR_REGEX; i ++) {
+    for (i = 0; i < NR_REGEX; i++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
@@ -92,22 +92,20 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-        case TK_NOTYPE:
-          break;
-        case TK_DEC:
-          strncpy(tokens[nr_token].str, substr_start, substr_len);
-        default:
-          tokens[nr_token].type = rules[i].token_type;
-          nr_token++;
-          break;
+          case TK_NOTYPE: break;
+          case TK_DEC: strncpy(tokens[nr_token].str, substr_start, substr_len);
+          default:
+            tokens[nr_token].type = rules[i].token_type;
+            nr_token++;
+            break;
         }
 
-        break;  // once matched, break for loop
+        break; // once matched, break for loop
       }
     }
 
     if (i == NR_REGEX) {
-      printf(ASNI_FMT("no match at position %d\n%s\n%*.s^\n", ASNI_FG_RED), position, e, position, "");
+      ERROR("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
       return false;
     }
   }
@@ -128,18 +126,13 @@ bool check_parentheses(int p, int q, bool *success) {
     int pair_acc = 0;
     for (int i = p; i <= q; i++) {
       switch (tokens[i].type) {
-      case '(':
-        pair_acc += 1;
-        break;
-      case ')':
-        pair_acc -= 1;
-        break;
-      default:
-        break;
+        case '(': pair_acc += 1; break;
+        case ')': pair_acc -= 1; break;
+        default: break;
       }
       if (pair_acc < 0) {
         // this must separate from the below one, to recognize expressions like (1)) + ((1)
-        printf(ASNI_FMT("Missing brackets\n", ASNI_FG_RED));
+        ERROR("Missing brackets\n");
         *success = false;
         return false;
       } else if (pair_acc == 0 && i != q) {
@@ -153,7 +146,7 @@ bool check_parentheses(int p, int q, bool *success) {
       return true;
     } else {
       // Missing bracket
-      printf(ASNI_FMT("Missing brackets\n", ASNI_FG_RED));
+      ERROR("Missing brackets\n");
       *success = false;
       return false;
     }
@@ -162,7 +155,7 @@ bool check_parentheses(int p, int q, bool *success) {
 
 uint32_t eval(int p, int q, bool *success) {
   if (p > q) {
-    printf(ASNI_FMT("Missing number\n", ASNI_FG_RED));
+    ERROR("Missing number\n");
     *success = false;
     return 0;
   } else if (p == q) {
@@ -171,7 +164,7 @@ uint32_t eval(int p, int q, bool *success) {
     if (tokens[p].type == TK_DEC) {
       return strtol(tokens[p].str, NULL, 10);
     } else {
-      printf(ASNI_FMT("Missing operand\n", ASNI_FG_RED));
+      ERROR("Missing operand\n");
       *success = false;
       return 0;
     }
@@ -183,7 +176,7 @@ uint32_t eval(int p, int q, bool *success) {
     if (*success != true) {
       return 0;
     }
-    int op = -1; // Position of the main operator in the token expression
+    int op = -1;          // Position of the main operator in the token expression
     uint precedence = -1; // Actually max uint, precedence of op
     int current_precedence;
     int pair_acc = 0;
@@ -195,41 +188,34 @@ uint32_t eval(int p, int q, bool *success) {
     for (int i = q; i >= p; i--) {
       current_precedence = 0;
       switch (tokens[i].type) {
-      case '(':
-        pair_acc += 1;
-        break;
-      case ')':
-        pair_acc -= 1;
-        break;
-      case '*':
-      case '/':
-        current_precedence++;
-      case '+':
-      case '-':
-        if (pair_acc == 0 && precedence > current_precedence) {
-          op = i;
-          precedence = current_precedence;
-        }
+        case '(': pair_acc += 1; break;
+        case ')': pair_acc -= 1; break;
+        case '*':
+        case '/':
+          current_precedence++;
+        case '+':
+        case '-':
+          if (pair_acc == 0 && precedence > current_precedence) {
+            op = i;
+            precedence = current_precedence;
+          }
       }
       if (pair_acc > 0) {
         // this must separate from the below one, to recognize expressions like (1)) + ((1)
-        printf(ASNI_FMT("Missing brackets\n", ASNI_FG_RED));
+        ERROR("Missing brackets\n");
         *success = false;
         return false;
       } else if (op != -1 && precedence == 0) {
-      // just an acceleration
+        // just an acceleration
         break;
       }
     }
 
     if (op == -1) {
       if (pair_acc != 0) {
-        printf(ASNI_FMT("Missing brackets\n", ASNI_FG_RED));
+        ERROR("Missing brackets\n");
       } else {
-        if (tokens[p].type == TK_NEG) {
-          return -eval(p + 1, q, success);
-        }
-        printf(ASNI_FMT("Missing operator\n", ASNI_FG_RED));
+        ERROR("Missing operator\n");
       }
       *success = false;
       return 0;
@@ -266,28 +252,23 @@ uint32_t eval(int p, int q, bool *success) {
     // printf("└───────────────┘\n");
 
     // End if error in subexpressions
-    if (*success != true) {
-      return 0;
-    }
+    if (*success != true) { return 0; }
 
     switch (tokens[op].type) {
-    case '+':
-      return val1 + val2;
-    case '-':
-      return val1 - val2;
-    case '*':
-      return val1 * val2;
-    case '/':
-      if (val2 == 0) {
-        printf(ASNI_FMT("Division by zero\n", ASNI_FG_RED));
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/':
+        if (val2 == 0) {
+          ERROR("Division by zero\n");
+          *success = false;
+          return 0;
+        }
+        return val1 / val2;
+      default:
+        ERROR("Something wrong\n"); // This should be actually not reachable
         *success = false;
         return 0;
-      }
-      return val1 / val2;
-    default:
-      printf(ASNI_FMT("Something wrong\n", ASNI_FG_RED)); // This should be actually not reachable
-      *success = false;
-      return 0;
     }
   }
 }
@@ -300,14 +281,12 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '-' && (
-      i == 0 ||
-      tokens[i - 1].type == '(' ||
-      tokens[i - 1].type == '+' ||
-      tokens[i - 1].type == '-' ||
-      tokens[i - 1].type == '*' ||
-      tokens[i - 1].type == '/'
-    )) {
+    if (tokens[i].type == '-' && (i == 0 ||
+                                  tokens[i - 1].type == '(' ||
+                                  tokens[i - 1].type == '+' ||
+                                  tokens[i - 1].type == '-' ||
+                                  tokens[i - 1].type == '*' ||
+                                  tokens[i - 1].type == '/')) {
       tokens[i].type = TK_NEG;
     }
   }

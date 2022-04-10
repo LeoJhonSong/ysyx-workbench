@@ -22,7 +22,8 @@ static char* rl_gets() {
     line_read = NULL;
   }
 
-  line_read = readline("(nemu) ");
+  // Meaning of \001 and \002, see: https://stackoverflow.com/a/55773513/10088906
+  line_read = readline("\001" ASNI_FG_NORMAL_PINK "\002\001" ASNI_NONE ASNI_BG_PINK "\002nemu\001" ASNI_NONE ASNI_FG_NORMAL_PINK "\002\001" ASNI_NONE "\002 ");
 
   if (line_read && *line_read) {
     add_history(line_read);
@@ -42,7 +43,7 @@ static int cmd_q(char *args) {
   return -1;
 }
 
-static int cmd_si(char *args) {
+static int cmd_s(char *args) {
   // execute one line by default
   if (args == NULL) {
     cpu_exec(1);
@@ -52,7 +53,7 @@ static int cmd_si(char *args) {
   return 0;
 }
 
-static int cmd_info(char *args) {
+static int cmd_i(char *args) {
   if (args == NULL) {
     printf("Missing subcommand\n");
   } else if (strcmp(args, "r") == 0) {
@@ -68,10 +69,9 @@ static int cmd_info(char *args) {
 static int cmd_x(char *args) {
   /* extract the first argument */
   char *arg = strtok(NULL, " ");
-  int word = 4; // a word is 4 bytes length
 
   if (arg == NULL) {
-    printf(ASNI_FMT("Missing amount\n", ASNI_FG_RED));
+    ERROR("Missing N, how many words to scan\n");
   } else {
     // TODO: only accept hex number for now
     int expr = strtol(strtok(NULL, " "), NULL, 16);
@@ -102,7 +102,7 @@ static int cmd_p(char *args) {
   bool success;
   word_t value = expr(args, &success);
   if (success) {
-    printf("result: " ASNI_FMT("%lu\n", ASNI_FG_GREEN), value);
+    printf("result: " ASNI_FMT("%lu\n", ASNI_FG_NORMAL_GREEN), value);
   }
   return 0;
 }
@@ -118,8 +118,8 @@ static struct {
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
     /* TODO: Add more commands */
-    {"si", "Execute next N program lines", cmd_si},
-    {"info", "Display register/watchpoint infomation", cmd_info},
+    {"s", "Single step N instructions", cmd_s},
+    {"i", "Display register/watchpoint infomation", cmd_i},
     {"x", "print N 4-bytes in memory start from EXPR", cmd_x},
     {"p", "evaluation value of given expression", cmd_p},
 };
@@ -143,7 +143,7 @@ static int cmd_help(char *args) {
         return 0;
       }
     }
-    printf(ASNI_FMT("Unknown command '%s'\n", ASNI_FG_RED), arg);
+    ERROR("Unknown command '%s'\n", arg);
   }
   return 0;
 }
@@ -187,7 +187,7 @@ void sdb_mainloop() {
     }
 
     if (i == NR_CMD) {
-      printf(ASNI_FMT("Unknown command '%s'\n", ASNI_FG_RED), cmd);
+      ERROR("Unknown command '%s'\n", cmd);
     }
   }
 }
