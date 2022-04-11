@@ -32,12 +32,12 @@ static void exec_once(Decode *s, vaddr_t pc) {
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf),  ANSI_FMT(FMT_WORD ":", ANSI_FG_WHITE), s->pc);
+  p += snprintf(p, sizeof(s->logbuf),  ASNI_FMT(FMT_WORD ":", ASNI_FG_WHITE), s->pc);
   int ilen = s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
   for (i = ilen - 1; i >= 0; i--) {
-    p += snprintf(p, 13, ANSI_FMT(" %02x", ANSI_FG_NORMAL_GREEN), inst[i]);
+    p += snprintf(p, 13, ASNI_FMT(" %02x", ASNI_FG_NORMAL_GREEN), inst[i]);
   }
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
@@ -45,11 +45,11 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  p += snprintf(p, 6, ANSI_FG_NORMAL_CYAN);
+  p += snprintf(p, 6, ASNI_FG_NORMAL_CYAN);
 
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,  MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-  p += snprintf(p + strlen(p), 5, ANSI_NONE);
+  p += snprintf(p + strlen(p), 5, ASNI_NONE);
 #endif
 }
 
@@ -100,9 +100,9 @@ void cpu_exec(uint64_t n) {
 
     case NEMU_END: case NEMU_ABORT:
       Log("nemu: %s at pc = " FMT_WORD,
-          (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
-           (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
-            ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+          (nemu_state.state == NEMU_ABORT ? ASNI_FMT("ABORT", ASNI_FG_RED) :
+           (nemu_state.halt_ret == 0 ? ASNI_FMT("HIT GOOD TRAP", ASNI_FG_GREEN) :
+            ASNI_FMT("HIT BAD TRAP", ASNI_FG_RED))),
           nemu_state.halt_pc);
       // fall through
     case NEMU_QUIT: statistic();

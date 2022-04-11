@@ -13,21 +13,21 @@ const char *regs[] = {
 void isa_reg_display() {
   int cols = 2;
   for (int i = 0; i < cols; i++) {
-    printf(" │ %sReg           %sHex                   %sDec         %s", ANSI_FG_NORMAL_WHITE, ANSI_FG_NORMAL_GREEN, ANSI_FG_NORMAL_CYAN, ANSI_NONE);
+    printf(" │ %sReg           %sHex                   %sDec         %s", ASNI_FG_NORMAL_WHITE, ASNI_FG_NORMAL_GREEN, ASNI_FG_NORMAL_CYAN, ASNI_NONE);
   }
   printf(" │\n");
   int n = ARRLEN(regs) / cols;
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < cols; j++) {
-      printf(" │ " ANSI_FMT("%-3s", ANSI_FG_NORMAL_WHITE), regs[n * j + i]);
+      printf(" │ " ASNI_FMT("%-3s", ASNI_FG_NORMAL_WHITE), regs[n * j + i]);
       // print the hex by bytes
       word_t value;
       for (int k = sizeof(cpu.gpr[0]) - 1; k >= 0; k--) {
         value = (cpu.gpr[n * j + i] >> 8 * k) & 0xff;
-        printf(" %s%02lx%s", value == 0 ? ANSI_DIM : ANSI_FG_NORMAL_GREEN, value, ANSI_NONE);
+        printf(" %s%02lx%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_GREEN, value, ASNI_NONE);
       }
       value = cpu.gpr[n * j + i];
-      printf(" %s%20lu%s", value == 0 ? ANSI_DIM : ANSI_FG_NORMAL_CYAN, value, ANSI_NONE);
+      printf(" %s%20lu%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_CYAN, value, ASNI_NONE);
     }
     printf(" │ \n");
   }
