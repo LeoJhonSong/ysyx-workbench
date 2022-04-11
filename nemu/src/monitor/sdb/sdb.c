@@ -1,14 +1,16 @@
-#include <isa.h>
+#include "sdb.h"
+
+#include "common.h"
+#include "utils.h"
+
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
-#include <memory/paddr.h>
-#include <readline/readline.h>
+#include <isa.h>
+#include <memory/vaddr.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
-#include "common.h"
-#include "sdb.h"
-#include "utils.h"
 
 static int is_batch_mode = false;
 

@@ -1,13 +1,10 @@
 #include "common.h"
 #include "debug.h"
 #include "utils.h"
+
 #include <isa.h>
-
-/* We use the POSIX regex functions to process regular expressions.
- * Type 'man regex' for more information about POSIX regex functions.
- */
-#include <regex.h>
-
+#include <memory/vaddr.h>
+#include <regex.h> // We use the POSIX regex functions to process regular expressions. Type 'man 7 regex' for more information about POSIX regex functions.
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -221,8 +218,7 @@ word_t eval(int p, int q, bool *success) {
         // process unary operators: negative sign, dereference
         if (tokens[p].type == TK_NEG) { return -eval(p + 1, q, success); }
         if (tokens[p].type == TK_DEREF) {
-          // return vaddr_read(strtol(tokens[q].str, NULL, 10), sizeof(word_t));
-          return 0;
+          return vaddr_read(strtol(tokens[q].str, NULL, 10), sizeof(word_t));
         }
         ERROR("Missing operator\n");
       }
