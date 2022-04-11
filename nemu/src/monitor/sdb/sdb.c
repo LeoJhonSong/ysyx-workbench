@@ -98,7 +98,7 @@ static int cmd_p(char *args) {
   bool success;
   word_t value = expr(args, &success);
   if (success) {
-    printf("result: " ASNI_FMT("%lu\n", ASNI_FG_NORMAL_GREEN), value);
+    printf("result: " ASNI_FMT("%lu | %lx\n", ASNI_FG_NORMAL_GREEN), value, value);
   }
   return 0;
 }
