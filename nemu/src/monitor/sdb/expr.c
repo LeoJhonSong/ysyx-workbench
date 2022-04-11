@@ -1,4 +1,3 @@
-#include "common.h"
 #include "debug.h"
 #include "utils.h"
 #include <isa.h>
@@ -7,7 +6,6 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +15,6 @@ enum {
   TK_DEC,
   TK_NEG, // - for negative sign
   TK_EQ,
-  TK_DEREF, // * for dereference
   /* TODO: Add more token types */
 };
 
@@ -156,7 +153,7 @@ bool check_parentheses(int p, int q, bool *success) {
   }
 }
 
-word_t eval(int p, int q, bool *success) {
+uint32_t eval(int p, int q, bool *success) {
   if (p > q) {
     ERROR("Missing number\n");
     *success = false;
@@ -218,10 +215,6 @@ word_t eval(int p, int q, bool *success) {
       if (pair_acc != 0) {
         ERROR("Missing brackets\n");
       } else {
-        // process unary operators: negative sign, dereference
-        if (tokens[p].type == TK_NEG) { return -eval(p + 1, q, success); }
-        if (tokens[p].type == TK_DEREF) { return 0//FIXME
-        ; }
         ERROR("Missing operator\n");
       }
       *success = false;
@@ -287,7 +280,6 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  // detect negative sign
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == '-' && (i == 0 ||
                                   tokens[i - 1].type == '(' ||
@@ -296,17 +288,6 @@ word_t expr(char *e, bool *success) {
                                   tokens[i - 1].type == '*' ||
                                   tokens[i - 1].type == '/')) {
       tokens[i].type = TK_NEG;
-    }
-  }
-  // detect dereference operator
-  for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '*' && (i == 0 ||
-                                  tokens[i - 1].type == '(' ||
-                                  tokens[i - 1].type == '+' ||
-                                  tokens[i - 1].type == '-' ||
-                                  tokens[i - 1].type == '*' ||
-                                  tokens[i - 1].type == '/')) {
-      tokens[i].type = TK_DEREF;
     }
   }
   *success = true;

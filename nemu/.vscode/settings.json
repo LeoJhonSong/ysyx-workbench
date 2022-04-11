@@ -16,13 +16,9 @@
         }
     },
     "cSpell.words": [
-        "MBASE",
         "menuconfig",
-        "MSIZE",
         "NEMU",
-        "paddr",
         "PCRE",
-        "pmem",
         "snpc",
         "SUBCMD",
         "unprogrammable"
