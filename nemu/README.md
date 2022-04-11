@@ -27,6 +27,22 @@ sdb: **S**imple **D**e**B**uger
 | 设置监视点   | `w EXPR`   | `w *0x2000`      | 当表达式`EXPR`的值发生变化时, 暂停程序执行                   |
 | 删除监视点   | `d N`      | `d 2`            | 删除序号为`N`的监视点                                        |
 
+表达式求值接受的表达式的BNF定义:
+```sh
+<expr> ::= <decimal-number> # 十进制整数
+  | <hexadecimal-number>    # 以"0x"开头的十六进制整数
+  | <reg_name>              # 以"$"开头
+  | "(" <expr> ")"
+  | <expr> "+" <expr>
+  | <expr> "-" <expr>
+  | <expr> "*" <expr>
+  | <expr> "/" <expr>
+  | <expr> "==" <expr>
+  | <expr> "!=" <expr>
+  | <expr> "&&" <expr>
+  | "*" <expr>              # 指针解引用
+```
+
 ## nemu riscv64的实现
 
 - [官方nemu源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)

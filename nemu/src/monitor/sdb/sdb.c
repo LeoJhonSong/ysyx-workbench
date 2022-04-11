@@ -1,14 +1,16 @@
-#include <isa.h>
+#include "sdb.h"
+
+#include "common.h"
+#include "utils.h"
+
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
-#include <memory/paddr.h>
-#include <readline/readline.h>
+#include <isa.h>
+#include <memory/vaddr.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
-#include "common.h"
-#include "sdb.h"
-#include "utils.h"
 
 static int is_batch_mode = false;
 
@@ -96,7 +98,7 @@ static int cmd_p(char *args) {
   bool success;
   word_t value = expr(args, &success);
   if (success) {
-    printf("result: " ASNI_FMT("%lu\n", ASNI_FG_NORMAL_GREEN), value);
+    printf("result: " ASNI_FMT("%lu | %016lx\n", ASNI_FG_NORMAL_GREEN), value, value);
   }
   return 0;
 }
