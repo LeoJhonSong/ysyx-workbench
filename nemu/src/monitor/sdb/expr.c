@@ -1,10 +1,11 @@
-#include "common.h"
 #include "debug.h"
 #include "utils.h"
-
 #include <isa.h>
-#include <memory/vaddr.h>
-#include <regex.h> // We use the POSIX regex functions to process regular expressions. Type 'man 7 regex' for more information about POSIX regex functions.
+
+/* We use the POSIX regex functions to process regular expressions.
+ * Type 'man regex' for more information about POSIX regex functions.
+ */
+#include <regex.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +15,6 @@ enum {
   TK_DEC,
   TK_NEG, // - for negative sign
   TK_EQ,
-  TK_DEREF, // * for dereference
   /* TODO: Add more token types */
 };
 
@@ -153,7 +153,7 @@ bool check_parentheses(int p, int q, bool *success) {
   }
 }
 
-word_t eval(int p, int q, bool *success) {
+uint32_t eval(int p, int q, bool *success) {
   if (p > q) {
     ERROR("Missing number\n");
     *success = false;
@@ -215,52 +215,41 @@ word_t eval(int p, int q, bool *success) {
       if (pair_acc != 0) {
         ERROR("Missing brackets\n");
       } else {
-        // process unary operators: negative sign, dereference
-        if (tokens[p].type == TK_NEG) { return -eval(p + 1, q, success); }
-        if (tokens[p].type == TK_DEREF) {
-          return vaddr_read(strtol(tokens[q].str, NULL, 10), sizeof(word_t));
-        }
         ERROR("Missing operator\n");
       }
       *success = false;
       return 0;
     }
 
-    #ifdef DEBUG_expr
     // For debug: print the expression stack
-    printf("\n┌───────────────┐\n");
-    for (int j = p; j <= op - 1; j++) {
-      if (tokens[j].type == TK_DEC) {
-        printf("%s", tokens[j].str);
-      } else if (tokens[j].type == TK_NEG) {
-        printf("-");
-      } else {
-        printf("%c", tokens[j].type);
-      }
-    }
-    #endif // DEBUG_expr
+    // printf("\n┌───────────────┐\n");
+    // for (int j = p; j <= op - 1; j++) {
+    //   if (tokens[j].type == TK_DEC) {
+    //     printf("%s", tokens[j].str);
+    //   } else if (tokens[j].type == TK_NEG) {
+    //     printf("-");
+    //   } else {
+    //     printf("%c", tokens[j].type);
+    //   }
+    // }
 
     uint32_t val1 = eval(p, op - 1, success);
 
-    #ifdef DEBUG_expr
-    printf("\t%c\t", tokens[op].type);
-    for (int j = op + 1; j <= q; j++) {
-      if (tokens[j].type == TK_DEC) {
-        printf("%s", tokens[j].str);
-      } else if (tokens[j].type == TK_NEG) {
-        printf("-");
-      } else {
-        printf("%c", tokens[j].type);
-      }
-    }
-    printf("\n");
-    #endif // DEBUG_expr
+    // printf("\t%c\t", tokens[op].type);
+    // for (int j = op + 1; j <= q; j++) {
+    //   if (tokens[j].type == TK_DEC) {
+    //     printf("%s", tokens[j].str);
+    //   } else if (tokens[j].type == TK_NEG) {
+    //     printf("-");
+    //   } else {
+    //     printf("%c", tokens[j].type);
+    //   }
+    // }
+    // printf("\n");
 
     uint32_t val2 = eval(op + 1, q, success);
 
-    #ifdef DEBUG_expr
-    printf("└───────────────┘\n");
-    #endif // DEBUG_expr
+    // printf("└───────────────┘\n");
 
     // End if error in subexpressions
     if (*success != true) { return 0; }
@@ -291,7 +280,6 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  // detect negative sign
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == '-' && (i == 0 ||
                                   tokens[i - 1].type == '(' ||
@@ -300,17 +288,6 @@ word_t expr(char *e, bool *success) {
                                   tokens[i - 1].type == '*' ||
                                   tokens[i - 1].type == '/')) {
       tokens[i].type = TK_NEG;
-    }
-  }
-  // detect dereference operator
-  for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '*' && (i == 0 ||
-                                  tokens[i - 1].type == '(' ||
-                                  tokens[i - 1].type == '+' ||
-                                  tokens[i - 1].type == '-' ||
-                                  tokens[i - 1].type == '*' ||
-                                  tokens[i - 1].type == '/')) {
-      tokens[i].type = TK_DEREF;
     }
   }
   *success = true;
