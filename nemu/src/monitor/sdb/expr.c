@@ -226,35 +226,41 @@ word_t eval(int p, int q, bool *success) {
       return 0;
     }
 
+    #ifdef DEBUG_expr
     // For debug: print the expression stack
-    // printf("\n┌───────────────┐\n");
-    // for (int j = p; j <= op - 1; j++) {
-    //   if (tokens[j].type == TK_DEC) {
-    //     printf("%s", tokens[j].str);
-    //   } else if (tokens[j].type == TK_NEG) {
-    //     printf("-");
-    //   } else {
-    //     printf("%c", tokens[j].type);
-    //   }
-    // }
+    printf("\n┌───────────────┐\n");
+    for (int j = p; j <= op - 1; j++) {
+      if (tokens[j].type == TK_DEC) {
+        printf("%s", tokens[j].str);
+      } else if (tokens[j].type == TK_NEG) {
+        printf("-");
+      } else {
+        printf("%c", tokens[j].type);
+      }
+    }
+    #endif // DEBUG_expr
 
     uint32_t val1 = eval(p, op - 1, success);
 
-    // printf("\t%c\t", tokens[op].type);
-    // for (int j = op + 1; j <= q; j++) {
-    //   if (tokens[j].type == TK_DEC) {
-    //     printf("%s", tokens[j].str);
-    //   } else if (tokens[j].type == TK_NEG) {
-    //     printf("-");
-    //   } else {
-    //     printf("%c", tokens[j].type);
-    //   }
-    // }
-    // printf("\n");
+    #ifdef DEBUG_expr
+    printf("\t%c\t", tokens[op].type);
+    for (int j = op + 1; j <= q; j++) {
+      if (tokens[j].type == TK_DEC) {
+        printf("%s", tokens[j].str);
+      } else if (tokens[j].type == TK_NEG) {
+        printf("-");
+      } else {
+        printf("%c", tokens[j].type);
+      }
+    }
+    printf("\n");
+    #endif // DEBUG_expr
 
     uint32_t val2 = eval(op + 1, q, success);
 
-    // printf("└───────────────┘\n");
+    #ifdef DEBUG_expr
+    printf("└───────────────┘\n");
+    #endif // DEBUG_expr
 
     // End if error in subexpressions
     if (*success != true) { return 0; }
