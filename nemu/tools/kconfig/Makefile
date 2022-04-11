@@ -3,7 +3,7 @@ obj := build
 SRCS += confdata.c expr.c preprocess.c symbol.c util.c
 SRCS += $(obj)/lexer.lex.c $(obj)/parser.tab.c
 CC = gcc
-CFLAGS += -DYYDEBUG
+ALLCFLAGS += -DYYDEBUG
 INC_PATH += .
 
 ifeq ($(NAME),conf)
