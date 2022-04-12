@@ -45,7 +45,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
       return cpu.gpr[i];
     }
   }
-  ERROR("Unknown register %s\n", s);
+  ERROR("Unknown register >%s<\n", s);
   *success = false;
   return 0;
 }
