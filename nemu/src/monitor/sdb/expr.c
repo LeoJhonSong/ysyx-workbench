@@ -45,7 +45,7 @@ static struct rule {
     {"-", '-'},                     // minus
     {"\\*", '*'},                   // plus
     {"/", '/'},                     // divide
-    {"\\$[[:alnum:]]", TK_REG},     // general purpose register name
+    {"\\$[[:alnum:]]+", TK_REG},     // general purpose register name
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -107,11 +107,11 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case TK_REG:
-            value_start += 1;
-            value_len -= 1;
+            value_start = substr_start + 1;
+            value_len = substr_len - 1;
           case TK_HEX:
-            value_start += 2;
-            value_len -= 2;
+            value_start = substr_start + 2;
+            value_len = substr_len - 2;
           case TK_DEC:
             strncpy(tokens[nr_token].str, value_start, value_len);
           default:
