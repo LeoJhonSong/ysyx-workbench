@@ -80,7 +80,7 @@ static int nr_token = 0; // amount of tokens detected
 char * getTypeValue(Token t) {
   char str[128];
   char *str_p = str;
-  printf("%s", t.str);
+  printf(">>>%s<<<", t.str);
 
   switch (t.type) {
     case TK_HEX: printf("0x%s", t.str); break;
