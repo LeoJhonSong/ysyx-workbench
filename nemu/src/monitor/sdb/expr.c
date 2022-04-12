@@ -110,7 +110,8 @@ static bool make_token(char *e) {
           case TK_REG:
             offset++;  // strip prefix $
           case TK_DEC:
-            strncpy(tokens[nr_token].str, substr_start + offset, substr_len - offset);
+            printf("%d", offset);
+            strncpy(tokens[nr_token].str, substr_start + offset, substr_len - offset + 1);
           default:
             tokens[nr_token].type = rules[i].token_type;
             nr_token++;
