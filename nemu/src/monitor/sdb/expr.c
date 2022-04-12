@@ -77,21 +77,21 @@ typedef struct token {
 static Token tokens[32] = {};
 static int nr_token = 0; // amount of tokens detected
 
-char * getTypeValue(Token t) {
+char * getTypeValue(Token *t) {
   char str[128];
   char *str_p = str;
-  printf(">>>%s<<<", t.str);
+  printf(">>>%s<<<\n", t->str);
 
-  switch (t.type) {
-    case TK_HEX: printf("0x%s", t.str); break;
-    case TK_DEC: snprintf(str_p, ARRLEN(str), "%s", t.str); break;
+  switch (t->type) {
+    case TK_HEX: printf("0x%s", t->str); break;
+    case TK_DEC: snprintf(str_p, ARRLEN(str), "%s", t->str); break;
     case TK_NEG: snprintf(str_p, ARRLEN(str), "-"); break;
     case TK_EQ: snprintf(str_p, ARRLEN(str), "=="); break;
     case TK_NEQ: snprintf(str_p, ARRLEN(str), "!="); break;
     case TK_AND: snprintf(str_p, ARRLEN(str), "&&"); break;
     case TK_DEREF: snprintf(str_p, ARRLEN(str), "*"); break;
-    case TK_REG: snprintf(str_p, ARRLEN(str), "$%s", t.str); break;
-    default: snprintf(str_p, ARRLEN(str), "%c", t.type); break;
+    case TK_REG: snprintf(str_p, ARRLEN(str), "$%s", t->str); break;
+    default: snprintf(str_p, ARRLEN(str), "%c", t->type); break;
   }
 
   return str_p;
@@ -151,7 +151,7 @@ static bool make_token(char *e) {
   #ifdef DEBUG_expr
   // print all tokens
   for (i = 0; i < ARRLEN(tokens); i++) {
-    printf("│ %d: %s", i, getTypeValue(tokens[i]));
+    printf("│ %d: %s", i, getTypeValue(&tokens[i]));
     // if (tokens[i].type < 256) {
     //   printf("│ %d: %c, %s\t", i, tokens[i].type, tokens[i].str);
     // } else {
@@ -286,7 +286,7 @@ word_t eval(int p, int q, bool *success) {
     // print the expression stack
     printf("\n┌───────────────┐\n");
     for (int i = p; i <= op - 1; i++) {
-      printf("%s", getTypeValue(tokens[i]));
+      printf("%s", getTypeValue(&tokens[i]));
     }
     #endif // DEBUG_expr
 
@@ -294,9 +294,9 @@ word_t eval(int p, int q, bool *success) {
     if (*success != true) { return 0; } // End if error in subexpressions
 
     #ifdef DEBUG_expr
-    printf("\t%s\t", getTypeValue(tokens[op]));
+    printf("\t%s\t", getTypeValue(&tokens[op]));
     for (int i = op + 1; i <= q; i++) {
-      printf("%s", getTypeValue(tokens[i]));
+      printf("%s", getTypeValue(&tokens[i]));
     }
     printf("\n");
     #endif // DEBUG_expr
