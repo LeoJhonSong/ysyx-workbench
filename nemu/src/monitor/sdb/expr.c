@@ -80,7 +80,6 @@ static int nr_token = 0; // amount of tokens detected
 char * getTypeValue(Token *t) {
   char str[128];
   char *str_p = str;
-  printf(">>>%s<<<", t->str);
 
   switch (t->type) {
     case TK_HEX: snprintf(str_p, ARRLEN(str), "0x%s", t->str); break;
@@ -94,6 +93,7 @@ char * getTypeValue(Token *t) {
     default: snprintf(str_p, ARRLEN(str), "%c", t->type); break;
   }
 
+  printf(">>>%s<<<", str);
   return str_p;
 }
 
