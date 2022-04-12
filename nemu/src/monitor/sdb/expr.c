@@ -223,6 +223,8 @@ word_t eval(int p, int q, bool *success) {
           current_precedence++;
         case '+':
         case '-':
+          current_precedence++;
+        case TK_EQ:
           if (pair_acc == 0 && precedence > current_precedence) {
             op = i;
             precedence = current_precedence;
