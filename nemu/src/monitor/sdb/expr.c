@@ -102,18 +102,16 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        char *value_start = substr_start;
-        int value_len = substr_len;
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case TK_REG:
-            value_start = substr_start + 1;
-            value_len = substr_len - 1;
+            substr_start++;
+            substr_len--;
           case TK_HEX:
-            value_start = substr_start + 2;
-            value_len = substr_len - 2;
+            substr_start++;
+            substr_len--;
           case TK_DEC:
-            strncpy(tokens[nr_token].str, value_start, value_len);
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
           default:
             tokens[nr_token].type = rules[i].token_type;
             nr_token++;
