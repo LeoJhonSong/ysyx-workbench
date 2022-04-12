@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "macro.h"
+#include "utils.h"
 
 #include <isa.h>
 #include <stdio.h>
@@ -44,6 +45,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
       return cpu.gpr[i];
     }
   }
+  ERROR("Unknown register %s", s);
   *success = false;
   return 0;
 }
