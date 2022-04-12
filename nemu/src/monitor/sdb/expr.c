@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum {
+enum Token_types {
   TK_NOTYPE = 256,
   TK_DEC,          // decimal non-negative int
   TK_NEG,          // - for negative sign
@@ -26,7 +26,7 @@ enum {
 
 static struct rule {
   const char *regex;
-  int token_type;
+  enum Token_types token_type;
 } rules[] = {
 
     /* TODO: Add more rules.
@@ -134,7 +134,7 @@ static bool make_token(char *e) {
     if (tokens[i].type < 256) {
       printf("│ %d: %c, %s\t", i, tokens[i].type, tokens[i].str);
     } else {
-      printf("│ %d: %d, %s\t", i, tokens[i].type, tokens[i].str);
+      printf("│ %d: %s, %s\t", i, tokens[i].type, tokens[i].str);
     }
   }
   printf("\n");
