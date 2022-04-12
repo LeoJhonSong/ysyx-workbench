@@ -205,7 +205,7 @@ word_t eval(int p, int q, bool *success) {
       return 0;
     }
     int op = -1;          // Position of the main operator in the token expression
-    uint precedence = 1; // precedence of op, initial with highest precedence
+    uint precedence = 0; // precedence of op, initial with highest precedence - 1
     int current_precedence;
     int pair_acc = 0;
     // Find the main operator. main operator is:
