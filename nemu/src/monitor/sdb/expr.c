@@ -20,7 +20,7 @@ enum {
   TK_NEQ,          // !=
   TK_AND,          // &&
   TK_DEREF,        // * for dereference
-  TK_REG,          // name of general purpose register
+  TK_REG,          // general purpose register name
   /* TODO: Add more token types */
 };
 
@@ -45,6 +45,7 @@ static struct rule {
     {"-", '-'},                     // minus
     {"\\*", '*'},                   // plus
     {"/", '/'},                     // divide
+    {"\\$[[:alnum:]]", TK_REG},     // general purpose register name
 };
 
 #define NR_REGEX ARRLEN(rules)
