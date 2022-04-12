@@ -271,6 +271,7 @@ word_t eval(int p, int q, bool *success) {
     #endif // DEBUG_expr
 
     uint32_t val1 = eval(p, op - 1, success);
+    if (*success != true) { return 0; } // End if error in subexpressions
 
     #ifdef DEBUG_expr
     printf("\t%c\t", tokens[op].type);
@@ -287,13 +288,11 @@ word_t eval(int p, int q, bool *success) {
     #endif // DEBUG_expr
 
     uint32_t val2 = eval(op + 1, q, success);
+    if (*success != true) { return 0; } // End if error in subexpressions
 
     #ifdef DEBUG_expr
     printf("└───────────────┘\n");
     #endif // DEBUG_expr
-
-    // End if error in subexpressions
-    if (*success != true) { return 0; }
 
     switch (tokens[op].type) {
       case '+': return val1 + val2;
