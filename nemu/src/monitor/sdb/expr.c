@@ -77,6 +77,17 @@ typedef struct token {
 static Token tokens[32] = {};
 static int nr_token = 0; // amount of tokens detected
 
+char * getTypeValue(Token t) {
+  char str[32];
+  char *str_p = str;
+
+  switch (t.type) {
+    case TK_DEC: snprintf(str_p, ARRLEN(str), "%s", t.str); break;
+  }
+
+  return str_p;
+}
+
 static bool make_token(char *e) {
   int position = 0;
   int i;
@@ -265,17 +276,18 @@ word_t eval(int p, int q, bool *success) {
     // print the expression stack
     printf("\n┌───────────────┐\n");
     for (int i = p; i <= op - 1; i++) {
-      switch (tokens[i].type) {
-        case TK_DEC: printf("%s", tokens[i].str); break;
-        case TK_NEG: printf("-"); break;
-        case TK_HEX: printf("0x%s", tokens[i].str); break;
-        case TK_EQ: printf("=="); break;
-        case TK_NEQ: printf("!="); break;
-        case TK_AND: printf("&&"); break;
-        case TK_DEREF: printf("*"); break;
-        case TK_REG: printf("$%s", tokens[i].str); break;
-        default: printf("%c", tokens[i].type); break;
-      }
+      // switch (tokens[i].type) {
+      //   case TK_DEC: printf("%s", tokens[i].str); break;
+      //   case TK_NEG: printf("-"); break;
+      //   case TK_HEX: printf("0x%s", tokens[i].str); break;
+      //   case TK_EQ: printf("=="); break;
+      //   case TK_NEQ: printf("!="); break;
+      //   case TK_AND: printf("&&"); break;
+      //   case TK_DEREF: printf("*"); break;
+      //   case TK_REG: printf("$%s", tokens[i].str); break;
+      //   default: printf("%c", tokens[i].type); break;
+      // }
+      printf("%s", getTypeValue(tokens[i]));
     }
     #endif // DEBUG_expr
 
