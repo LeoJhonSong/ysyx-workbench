@@ -11,6 +11,10 @@
   - Enable debug information: Yes
 ```
 
+## 编译运行
+
+运行`make run`编译并进入nemu的sdb. 如果需要从命令行额外添加预处理宏, 比如调试`nemu/src/monitor/sdb/expr.c`用的`DEBUG_expr`, 设置到`CFLAGS`: `make run CFLAGS=-DDEBUG_expr`. 不过由于make大概率无法准确根据从命令行添加的宏判断需要重新编译哪些文件, 最好先`make clean`.
+
 ## sdb
 
 sdb: **S**imple **D**e**B**uger

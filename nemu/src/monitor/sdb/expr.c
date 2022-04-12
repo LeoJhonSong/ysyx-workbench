@@ -11,10 +11,14 @@
 
 enum {
   TK_NOTYPE = 256,
-  TK_DEC,
-  TK_NEG, // - for negative sign
-  TK_EQ,
-  TK_DEREF, // * for dereference
+  TK_DEC,          // decimal non-negative int
+  TK_NEG,          // - for negative sign
+  TK_HEX,          // hex non-negative int
+  TK_EQ,           // ==
+  TK_NEQ,          // !=
+  TK_AND,          // &&
+  TK_DEREF,        // * for dereference
+  TK_REG,          // name of general purpose register
   /* TODO: Add more token types */
 };
 
@@ -27,15 +31,18 @@ static struct rule {
      * Pay attention to the precedence level of different rules.
      */
 
-    {"[[:blank:]]+", TK_NOTYPE}, // spaces
-    {"[[:digit:]]+", TK_DEC},    // decimal non-negative 32bits int
-    {"\\(", '('},                // (
-    {"\\)", ')'},                // )
-    {"==", TK_EQ},               // equal
-    {"\\+", '+'},                // plus
-    {"-", '-'},                  // minus
-    {"\\*", '*'},                // plus
-    {"/", '/'},                  // divide
+    {"[[:blank:]]+", TK_NOTYPE},    // spaces
+    {"[[:digit:]]+", TK_DEC},       // decimal non-negative int
+    {"0[xX][[:xdigit:]]+", TK_HEX}, // hex non-negative int
+    {"\\(", '('},                   // (
+    {"\\)", ')'},                   // )
+    {"==", TK_EQ},                  // equal
+    {"!=", TK_NEQ},                 // not equal
+    {"&&", TK_AND},                 // logic and
+    {"\\+", '+'},                   // plus
+    {"-", '-'},                     // minus
+    {"\\*", '*'},                   // plus
+    {"/", '/'},                     // divide
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -81,8 +88,10 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        // For debug: print all rules matched
-        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        #ifdef DEBUG_expr
+        // print all rules matched
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        #endif // DEBUG_expr
 
         position += substr_len;
 
@@ -110,10 +119,12 @@ static bool make_token(char *e) {
     }
   }
 
-  // For debug: print all tokens
-  // for (i = 0; i < 32; i++) {
-  //   printf("│ %d: %s\t", tokens[i].type, tokens[i].str);
-  // }
+  #ifdef DEBUG_expr
+  // print all tokens
+  for (i = 0; i < 32; i++) {
+    printf("│ %d: %s\t", tokens[i].type, tokens[i].str);
+  }
+  #endif // DEBUG_expr
 
   return true;
 }
@@ -227,7 +238,7 @@ word_t eval(int p, int q, bool *success) {
     }
 
     #ifdef DEBUG_expr
-    // For debug: print the expression stack
+    // print the expression stack
     printf("\n┌───────────────┐\n");
     for (int j = p; j <= op - 1; j++) {
       if (tokens[j].type == TK_DEC) {
