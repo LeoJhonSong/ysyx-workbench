@@ -111,7 +111,7 @@ static bool make_token(char *e) {
             offset++;  // strip prefix $
           case TK_DEC:
             strncpy(tokens[nr_token].str, substr_start + offset, substr_len - offset);
-            tokens[nr_token].str[substr_len - offset] = '\0';
+            tokens[nr_token].str[substr_len - offset] = '\0'; // terminate the string manually since strncpy may not null-terminate it for us
           default:
             tokens[nr_token].type = rules[i].token_type;
             nr_token++;
@@ -278,12 +278,16 @@ word_t eval(int p, int q, bool *success) {
     #ifdef DEBUG_expr
     printf("\t%c\t", tokens[op].type);
     for (int i = op + 1; i <= q; i++) {
-      if (tokens[i].type == TK_DEC) {
-        printf("%s", tokens[i].str);
-      } else if (tokens[i].type == TK_NEG) {
-        printf("-");
-      } else {
-        printf("%c", tokens[i].type);
+      switch (tokens[i].type) {
+        case TK_DEC: printf("%s", tokens[i].str); break;
+        case TK_NEG: printf("-"); break;
+        case TK_HEX: printf("0x%s", tokens[i].str); break;
+        case TK_EQ: printf("=="); break;
+        case TK_NEQ: printf("!="); break;
+        case TK_AND: printf("&&"); break;
+        case TK_DEREF: printf("*"); break;
+        case TK_REG: printf("$%s", tokens[i].str); break;
+        default: printf("%c", tokens[i].type); break;
       }
     }
     printf("\n");
