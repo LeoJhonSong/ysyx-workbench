@@ -106,10 +106,10 @@ static bool make_token(char *e) {
           case TK_NOTYPE: break;
           case TK_HEX:
             substr_start++;
-            substr_len--;
+            // substr_len--;
           case TK_REG:
             substr_start++;
-            substr_len--;
+            // substr_len--;
           case TK_DEC:
             strncpy(tokens[nr_token].str, substr_start, substr_len);
           default:
