@@ -313,6 +313,7 @@ word_t eval(int p, int q, bool *success) {
           return 0;
         }
         return val1 / val2;
+      case TK_EQ: return val1 == val2;
       default:
         ERROR("Something wrong\n"); // This should be actually not reachable
         *success = false;
