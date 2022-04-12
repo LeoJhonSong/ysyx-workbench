@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 enum {
   TK_NOTYPE = 256,
@@ -33,7 +34,7 @@ static struct rule {
      */
 
     {"[[:blank:]]+", TK_NOTYPE},    // spaces
-    {"0[xX][[:xdigit:]]+", TK_HEX}, // hex non-negative int
+    {"0[xX][[:xdigit:]]+", TK_HEX}, // hex non-negative int, this must put in front of TK_DEC, otherwise 0x123 split into 0 (TK_DEC), x123 (no match)
     {"[[:digit:]]+", TK_DEC},       // decimal non-negative int
     {"\\(", '('},                   // (
     {"\\)", ')'},                   // )
@@ -104,6 +105,7 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case TK_DEC: strncpy(tokens[nr_token].str, substr_start, substr_len);
+          case TK_HEX: strncpy(tokens[nr_token].str, substr_start + 2, substr_len - 2);
           default:
             tokens[nr_token].type = rules[i].token_type;
             nr_token++;
