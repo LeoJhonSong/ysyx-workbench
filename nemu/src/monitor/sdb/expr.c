@@ -205,7 +205,7 @@ word_t eval(int p, int q, bool *success) {
       return 0;
     }
     int op = -1;          // Position of the main operator in the token expression
-    uint precedence = -1; // Actually max uint, precedence of op
+    uint precedence = 1; // precedence of op, initial with highest precedence
     int current_precedence;
     int pair_acc = 0;
     // Find the main operator. main operator is:
@@ -218,14 +218,19 @@ word_t eval(int p, int q, bool *success) {
       switch (tokens[i].type) {
         case '(': pair_acc += 1; break;
         case ')': pair_acc -= 1; break;
-        case '*':
-        case '/':
+        // Implement precedence redering to C Operator Precedence: https://en.cppreference.com/w/c/language/operator_precedence
+        // Note 1 is the highest precedence, the bigger the amount is, the lower the precedence is.
+        case TK_AND:
+          current_precedence++;
+        case TK_EQ:
+        case TK_NEQ:
           current_precedence++;
         case '+':
         case '-':
           current_precedence++;
-        case TK_EQ:
-          if (pair_acc == 0 && precedence > current_precedence) {
+        case '*':
+        case '/':
+          if (pair_acc == 0 && precedence < current_precedence) {
             op = i;
             precedence = current_precedence;
           }
@@ -314,6 +319,8 @@ word_t eval(int p, int q, bool *success) {
         }
         return val1 / val2;
       case TK_EQ: return val1 == val2;
+      case TK_NEQ: return val1 != val2;
+      case TK_AND: return val1 && val2;
       default:
         ERROR("Something wrong\n"); // This should be actually not reachable
         *success = false;
