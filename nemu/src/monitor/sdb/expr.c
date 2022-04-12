@@ -81,7 +81,7 @@ char * getTypeValue(Token *t) {
   char str[128];
   char *str_p = str;
   // printf(">>>%s<<<\n", t->str);
-  printf("");
+  printf("%s", "");
 
   switch (t->type) {
     case TK_HEX: snprintf(str_p, ARRLEN(str), "0x%s", t->str); break;
