@@ -1,5 +1,6 @@
 #include "common.h"
 #include "debug.h"
+#include "macro.h"
 #include "utils.h"
 
 #include <isa.h>
@@ -121,8 +122,12 @@ static bool make_token(char *e) {
 
   #ifdef DEBUG_expr
   // print all tokens
-  for (i = 0; i < 32; i++) {
-    printf("│ %d: %s\t", tokens[i].type, tokens[i].str);
+  for (i = 0; i < ARRLEN(tokens); i++) {
+    if (tokens[i].type < 256) {
+      printf("│ %d: %c, %s\t", i, tokens[i].type, tokens[i].str);
+    } else {
+      printf("│ %d: %d, %s\t", i, tokens[i].type, tokens[i].str);
+    }
   }
   printf("\n");
   #endif // DEBUG_expr
