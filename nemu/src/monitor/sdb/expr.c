@@ -33,8 +33,8 @@ static struct rule {
      */
 
     {"[[:blank:]]+", TK_NOTYPE},    // spaces
-    {"[[:digit:]]+", TK_DEC},       // decimal non-negative int
     {"0[xX][[:xdigit:]]+", TK_HEX}, // hex non-negative int
+    {"[[:digit:]]+", TK_DEC},       // decimal non-negative int
     {"\\(", '('},                   // (
     {"\\)", ')'},                   // )
     {"==", TK_EQ},                  // equal
