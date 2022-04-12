@@ -124,6 +124,7 @@ static bool make_token(char *e) {
   for (i = 0; i < 32; i++) {
     printf("│ %d: %s\t", tokens[i].type, tokens[i].str);
   }
+  printf("\n");
   #endif // DEBUG_expr
 
   return true;
