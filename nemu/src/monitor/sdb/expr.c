@@ -214,7 +214,7 @@ word_t eval(int p, int q, bool *success) {
     // - With lowest precedence in the expression
     // - When there are multiple operators with same precedence, the right most one is what we want
     for (int i = q; i >= p; i--) {
-      current_precedence = 0;
+      current_precedence = 1;
       switch (tokens[i].type) {
         case '(': pair_acc += 1; break;
         case ')': pair_acc -= 1; break;
