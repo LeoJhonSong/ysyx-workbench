@@ -103,14 +103,17 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
         int offset = 0;
+        int len = substr_len;
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case TK_HEX:
             offset++;  // strip prefix $
+            len--;
           case TK_REG:
             offset++;  // strip prefix 0x/0X
+            len--;
           case TK_DEC:
-            strncpy(tokens[nr_token].str, substr_start + offset, substr_len);
+            strncpy(tokens[nr_token].str, substr_start + offset, len);
           default:
             tokens[nr_token].type = rules[i].token_type;
             nr_token++;
