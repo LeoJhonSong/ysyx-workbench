@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum Token_types {
+enum {
   TK_NOTYPE = 256,
   TK_DEC,          // decimal non-negative int
   TK_NEG,          // - for negative sign
@@ -26,7 +26,7 @@ enum Token_types {
 
 static struct rule {
   const char *regex;
-  enum Token_types token_type;
+  int token_type;
 } rules[] = {
 
     /* TODO: Add more rules.
@@ -134,7 +134,7 @@ static bool make_token(char *e) {
     if (tokens[i].type < 256) {
       printf("│ %d: %c, %s\t", i, tokens[i].type, tokens[i].str);
     } else {
-      printf("│ %d: %s, %s\t", i, tokens[i].type, tokens[i].str);
+      printf("│ %d: %d, %s\t", i, tokens[i].type, tokens[i].str);
     }
   }
   printf("\n");
@@ -184,14 +184,17 @@ word_t eval(int p, int q, bool *success) {
     *success = false;
     return 0;
   } else if (p == q) {
-    // Case: single token.
+    // Case: single token, return the value.
     // For now this token should be a number, return the value of the number.
-    if (tokens[p].type == TK_DEC) {
-      return strtol(tokens[p].str, NULL, 10);
-    } else {
-      ERROR("Missing operand\n");
-      *success = false;
-      return 0;
+    // This token should be: TK_DEC/TK_HEX/TK_REG
+    switch (tokens[p].type) {
+      case TK_DEC: return strtol(tokens[p].str, NULL, 10);
+      case TK_HEX: return strtol(tokens[p].str, NULL, 16);
+      case TK_REG: return isa_reg_str2val(tokens[p].str, success);
+      default:
+        ERROR("Missing operand\n");
+        *success = false;
+        return 0;
     }
   } else if (check_parentheses(p, q, success) == true) {
     // Case: the expression is surrounded by a matched pair of parentheses.
