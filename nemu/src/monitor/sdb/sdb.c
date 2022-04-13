@@ -84,7 +84,7 @@ static int cmd_x(char *args) {
     printf(">>>%s<<<", arg);
     // TODO: only accept hex number for now
     bool success;
-    word_t expression = expr(args, &success);
+    word_t expression = expr(arg, &success);
     printf(" starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expression);
     printf(ASNI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ASNI_DIM));
     for (int i = 0; i < N; i++) {
