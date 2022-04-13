@@ -78,7 +78,7 @@ static Token tokens[32] = {};
 static int nr_token = 0; // amount of tokens detected
 
 char * getTypeValue(Token *t) {
-  char str[128];
+  static char str[128];
   char *str_p = str;
 
   switch (t->type) {
