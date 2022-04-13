@@ -80,6 +80,7 @@ static int cmd_x(char *args) {
   } else {
     int N = strtol(arg, NULL, 10);
     printf("%lu", strlen(arg));
+    printf(">>>%s<<<", args);
     args += strlen(arg);
     printf(">>>%s<<<", args);
     // TODO: only accept hex number for now
