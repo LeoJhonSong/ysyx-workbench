@@ -203,8 +203,8 @@ word_t eval(int p, int q, bool *success) {
     // For now this token should be a number, return the value of the number.
     // This token should be: TK_DEC/TK_HEX/TK_REG
     switch (tokens[p].type) {
-      case TK_DEC: return strtoll(tokens[p].str, NULL, 10);
-      case TK_HEX: return strtoll(tokens[p].str, NULL, 16);
+      case TK_DEC: return strtoull(tokens[p].str, NULL, 10);
+      case TK_HEX: return strtoull(tokens[p].str, NULL, 16);
       case TK_REG: return isa_reg_str2val(tokens[p].str, success);
       default:
         ERROR("Missing operand\n");
