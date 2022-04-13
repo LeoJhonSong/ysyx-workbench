@@ -79,7 +79,7 @@ static int cmd_x(char *args) {
     ERROR("Missing N: how many words to scan\n");
   } else {
     int N = strtol(arg, NULL, 10);
-    arg += strlen(arg) + 2;
+    arg += strlen(arg);
 
     bool success;
     word_t expression = expr(arg, &success);
