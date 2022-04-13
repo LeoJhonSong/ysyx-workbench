@@ -11,6 +11,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
+#include <string.h>
 
 static int is_batch_mode = false;
 
@@ -78,9 +79,8 @@ static int cmd_x(char *args) {
     ERROR("Missing N: how many words to scan\n");
   } else {
     // TODO: only accept hex number for now
-    // bool success;
-    // word_t expression = expr(args, &success);
-    word_t expression = strtol(strtok(NULL, " "), NULL, 16);
+    bool success;
+    word_t expression = expr(strtok(NULL, " "), &success);
     printf(" starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expression);
     printf(ASNI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ASNI_DIM));
     for (int i = 0; i < strtol(arg, NULL, 10); i++) {
