@@ -93,7 +93,6 @@ char * getTypeValue(Token *t) {
     default: snprintf(str_p, ARRLEN(str), "%c", t->type); break;
   }
 
-  str_p = str;
   return str_p;
 }
 
