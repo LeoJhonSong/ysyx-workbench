@@ -79,6 +79,7 @@ static int cmd_x(char *args) {
     ERROR("Missing N: how many words to scan\n");
   } else {
     int N = strtol(arg, NULL, 10);
+    printf("%lu", strlen(arg));
     args += strlen(arg);
     printf(">>>%s<<<", args);
     // TODO: only accept hex number for now
