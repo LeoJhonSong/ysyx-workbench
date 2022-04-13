@@ -281,7 +281,7 @@ word_t eval(int p, int q, bool *success) {
     }
     #endif // DEBUG_expr
 
-    uint32_t val1 = eval(p, op - 1, success);
+    word_t val1 = eval(p, op - 1, success);
     if (*success != true) { return 0; } // End if error in subexpressions
 
     #ifdef DEBUG_expr
@@ -292,7 +292,7 @@ word_t eval(int p, int q, bool *success) {
     printf("\n");
     #endif // DEBUG_expr
 
-    uint32_t val2 = eval(op + 1, q, success);
+    word_t val2 = eval(op + 1, q, success);
     if (*success != true) { return 0; } // End if error in subexpressions
 
     #ifdef DEBUG_expr
