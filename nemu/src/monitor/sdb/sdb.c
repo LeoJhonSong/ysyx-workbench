@@ -74,6 +74,7 @@ static int cmd_i(char *args) {
 static int cmd_x(char *args) {
   /* extract the first argument */
   char *arg = strtok(NULL, " ");
+  printf(">>>%s<<<", arg);
 
   if (arg == NULL) {
     ERROR("Missing N: how many words to scan\n");
