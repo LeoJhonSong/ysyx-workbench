@@ -13,39 +13,33 @@
 
 enum {
   TK_NOTYPE = 256,
-  TK_DEC,          // decimal non-negative int
-  TK_NEG,          // - for negative sign
-  TK_HEX,          // hex non-negative int
-  TK_EQ,           // ==
-  TK_NEQ,          // !=
-  TK_AND,          // &&
-  TK_DEREF,        // * for dereference
-  TK_REG,          // general purpose register name
-  /* TODO: Add more token types */
+  TK_DEC,   // decimal non-negative int
+  TK_NEG,   // - for negative sign
+  TK_HEX,   // hex non-negative int
+  TK_EQ,    // ==
+  TK_NEQ,   // !=
+  TK_AND,   // &&
+  TK_DEREF, // * for dereference
+  TK_REG,   // general purpose register name
 };
 
 static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-
-    /* TODO: Add more rules.
-     * Pay attention to the precedence level of different rules.
-     */
-
-    {"[[:blank:]]+", TK_NOTYPE},    // spaces
-    {"0[xX][[:xdigit:]]+", TK_HEX}, // hex non-negative int, this must put in front of TK_DEC, otherwise 0x123 split into 0 (TK_DEC), x123 (no match)
-    {"[[:digit:]]+", TK_DEC},       // decimal non-negative int
-    {"\\(", '('},                   // (
-    {"\\)", ')'},                   // )
-    {"==", TK_EQ},                  // equal
-    {"!=", TK_NEQ},                 // not equal
-    {"&&", TK_AND},                 // logic and
-    {"\\+", '+'},                   // plus
-    {"-", '-'},                     // minus
-    {"\\*", '*'},                   // plus
-    {"/", '/'},                     // divide
-    {"\\$[[:alnum:]]+", TK_REG},     // general purpose register name
+  {"[[:blank:]]+", TK_NOTYPE},    // spaces
+  {"0[xX][[:xdigit:]]+", TK_HEX}, // hex non-negative int, this must put in front of TK_DEC, otherwise 0x123 split into 0 (TK_DEC), x123 (no match)
+  {"[[:digit:]]+", TK_DEC},       // decimal non-negative int
+  {"\\(", '('},                   // (
+  {"\\)", ')'},                   // )
+  {"==", TK_EQ},                  // equal
+  {"!=", TK_NEQ},                 // not equal
+  {"&&", TK_AND},                 // logic and
+  {"\\+", '+'},                   // plus
+  {"-", '-'},                     // minus
+  {"\\*", '*'},                   // plus
+  {"/", '/'},                     // divide
+  {"\\$[[:alnum:]]+", TK_REG},    // general purpose register name
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -77,7 +71,7 @@ typedef struct token {
 static Token tokens[32] = {};
 static int nr_token = 0; // amount of tokens detected
 
-char * getTypeValue(Token *t) {
+char *getTypeValue(Token *t) {
   static char str[2 * ARRLEN(tokens[0].str)];
   char *str_p = str;
 
@@ -110,24 +104,21 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        #ifdef DEBUG_expr
+#ifdef DEBUG_expr
         // print all rules matched
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
-        #endif // DEBUG_expr
+#endif // DEBUG_expr
 
         position += substr_len;
 
-        /* TODO: Now a new token is recognized with rules[i]. Add codes
-         * to record the token in the array `tokens'. For certain types
-         * of tokens, some extra actions should be performed.
-         */
+        // Record the striped string for hex, register, decimal
         int offset = 0;
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case TK_HEX:
-            offset++;  // strip prefix 0x/0X
+            offset++; // strip prefix 0x/0X
           case TK_REG:
-            offset++;  // strip prefix $
+            offset++; // strip prefix $
           case TK_DEC:
             strncpy(tokens[nr_token].str, substr_start + offset, substr_len - offset);
             tokens[nr_token].str[substr_len - offset] = '\0'; // terminate the string manually since strncpy may not null-terminate it for us
@@ -147,13 +138,13 @@ static bool make_token(char *e) {
     }
   }
 
-  #ifdef DEBUG_expr
+#ifdef DEBUG_expr
   // print all tokens
   for (i = 0; i < ARRLEN(tokens); i++) {
     printf("│ %d: %s", i, getTypeValue(&tokens[i]));
   }
   printf("\n");
-  #endif // DEBUG_expr
+#endif // DEBUG_expr
 
   return true;
 }
@@ -219,7 +210,7 @@ word_t eval(int p, int q, bool *success) {
     if (*success != true) {
       return 0;
     }
-    int op = -1;          // Position of the main operator in the token expression
+    int op = -1;         // Position of the main operator in the token expression
     uint precedence = 0; // precedence of op, initial with highest precedence - 1
     int current_precedence;
     int pair_acc = 0;
@@ -273,31 +264,31 @@ word_t eval(int p, int q, bool *success) {
       return 0;
     }
 
-    #ifdef DEBUG_expr
+#ifdef DEBUG_expr
     // print the expression stack
     printf("\n┌───────────────┐\n");
     for (int i = p; i <= op - 1; i++) {
       printf("%s", getTypeValue(&tokens[i]));
     }
-    #endif // DEBUG_expr
+#endif // DEBUG_expr
 
     word_t val1 = eval(p, op - 1, success);
     if (*success != true) { return 0; } // End if error in subexpressions
 
-    #ifdef DEBUG_expr
+#ifdef DEBUG_expr
     printf("\t%s\t", getTypeValue(&tokens[op]));
     for (int i = op + 1; i <= q; i++) {
       printf("%s", getTypeValue(&tokens[i]));
     }
     printf("\n");
-    #endif // DEBUG_expr
+#endif // DEBUG_expr
 
     word_t val2 = eval(op + 1, q, success);
     if (*success != true) { return 0; } // End if error in subexpressions
 
-    #ifdef DEBUG_expr
+#ifdef DEBUG_expr
     printf("└───────────────┘\n");
-    #endif // DEBUG_expr
+#endif // DEBUG_expr
 
     switch (tokens[op].type) {
       case '+': return val1 + val2;
@@ -327,26 +318,29 @@ word_t expr(char *e, bool *success) {
     return 0;
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
   // detect negative sign
   for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '-' && (i == 0 ||
-                                  tokens[i - 1].type == '(' ||
-                                  tokens[i - 1].type == '+' ||
-                                  tokens[i - 1].type == '-' ||
-                                  tokens[i - 1].type == '*' ||
-                                  tokens[i - 1].type == '/')) {
+    if (tokens[i].type == '-' && (
+      i == 0 ||
+      tokens[i - 1].type == '(' ||
+      tokens[i - 1].type == '+' ||
+      tokens[i - 1].type == '-' ||
+      tokens[i - 1].type == '*' ||
+      tokens[i - 1].type == '/'
+    )) {
       tokens[i].type = TK_NEG;
     }
   }
   // detect dereference operator
   for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '*' && (i == 0 ||
-                                  tokens[i - 1].type == '(' ||
-                                  tokens[i - 1].type == '+' ||
-                                  tokens[i - 1].type == '-' ||
-                                  tokens[i - 1].type == '*' ||
-                                  tokens[i - 1].type == '/')) {
+    if (tokens[i].type == '*' && (
+      i == 0 ||
+      tokens[i - 1].type == '(' ||
+      tokens[i - 1].type == '+' ||
+      tokens[i - 1].type == '-' ||
+      tokens[i - 1].type == '*' ||
+      tokens[i - 1].type == '/'
+    )) {
       tokens[i].type = TK_DEREF;
     }
   }
