@@ -1,14 +1,17 @@
-#include <isa.h>
+#include "sdb.h"
+
+#include "common.h"
+#include "utils.h"
+
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
-#include <memory/paddr.h>
-#include <readline/readline.h>
+#include <isa.h>
+#include <memory/vaddr.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
-#include "common.h"
-#include "sdb.h"
-#include "utils.h"
+#include <string.h>
 
 static int is_batch_mode = false;
 
@@ -16,7 +19,7 @@ void init_regex();
 void init_wp_pool();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
-static char* rl_gets() {
+static char *rl_gets() {
   static char *line_read = NULL;
 
   if (line_read) {
@@ -75,15 +78,18 @@ static int cmd_x(char *args) {
   if (arg == NULL) {
     ERROR("Missing N: how many words to scan\n");
   } else {
-    // TODO: only accept hex number for now
-    word_t expr = strtol(strtok(NULL, " "), NULL, 16);
-    printf(">>> starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expr);
+    int N = strtol(arg, NULL, 10);
+    arg += strlen(arg) + 1; // +1 to go through the \0
+
+    bool success;
+    word_t expression = expr(arg, &success);
+    printf(" starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expression);
     printf(ASNI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ASNI_DIM));
-    for (int i = 0; i < strtol(arg, NULL, 10); i++) {
+    for (int i = 0; i < N; i++) {
       printf(ASNI_FG_WHITE "%8lx" ASNI_NONE ":", i * sizeof(word_t));
       // print a word of memory by bytes, high order bytes first
       for (int j = sizeof(word_t) - 1; j >= 0; j--) {
-        word_t value = vaddr_read(expr + i * 4 + j, 1);
+        word_t value = vaddr_read(expression + i * 4 + j, 1);
         printf(" %s%02lx%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_GREEN, value, ASNI_NONE);
       }
       printf("\n");
@@ -96,7 +102,7 @@ static int cmd_p(char *args) {
   bool success;
   word_t value = expr(args, &success);
   if (success) {
-    printf("result: " ASNI_FMT("%lu\n", ASNI_FG_NORMAL_GREEN), value);
+    printf("result: " ASNI_FMT("%lu | %16lx\n", ASNI_FG_NORMAL_GREEN), value, value);
   }
   return 0;
 }
@@ -108,14 +114,14 @@ static struct {
   const char *description;
   int (*handler)(char *);
 } cmd_table[] = {
-    {"help", "Display informations about all supported commands", cmd_help},
-    {"c", "Continue the execution of the program", cmd_c},
-    {"q", "Exit NEMU", cmd_q},
-    /* TODO: Add more commands */
-    {"s", "Single step N instructions", cmd_s},
-    {"i", "Display register/watchpoint infomation", cmd_i},
-    {"x", "print N 4-bytes in memory start from EXPR", cmd_x},
-    {"p", "evaluation value of given expression", cmd_p},
+  {"help", "Display informations about all supported commands", cmd_help},
+  {"c", "Continue the execution of the program", cmd_c},
+  {"q", "Exit NEMU", cmd_q},
+  /* TODO: Add more commands */
+  {"s", "Single step N instructions", cmd_s},
+  {"i", "Display register/watchpoint infomation", cmd_i},
+  {"x", "print N 4-bytes in memory start from EXPR", cmd_x},
+  {"p", "evaluation value of given expression", cmd_p},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -152,7 +158,7 @@ void sdb_mainloop() {
     return;
   }
 
-  for (char *str; (str = rl_gets()) != NULL; ) {
+  for (char *str; (str = rl_gets()) != NULL;) {
     char *str_end = str + strlen(str);
 
     /* extract the first token as the command */
@@ -173,7 +179,7 @@ void sdb_mainloop() {
 #endif
 
     int i;
-    for (i = 0; i < NR_CMD; i ++) {
+    for (i = 0; i < NR_CMD; i++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if (cmd_table[i].handler(args) < 0) { return; }
         break;

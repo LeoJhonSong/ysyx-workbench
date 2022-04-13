@@ -11,6 +11,10 @@
   - Enable debug information: Yes
 ```
 
+## 编译运行
+
+运行`make run`编译并进入nemu的sdb. 如果需要从命令行额外添加预处理宏, 比如调试`nemu/src/monitor/sdb/expr.c`用的`DEBUG_expr`, 设置到`CFLAGS`: `make run CFLAGS=-DDEBUG_expr`. 不过由于make大概率无法准确根据从命令行添加的宏判断需要重新编译哪些文件, 最好先`make clean`.
+
 ## sdb
 
 sdb: **S**imple **D**e**B**uger
@@ -23,9 +27,25 @@ sdb: **S**imple **D**e**B**uger
 | 单步执行     | `s [N]`    | `s 10`           | 让程序单步执行`N`条指令后暂停执行, 当`N`没有给出时, 缺省为`1` |
 | 打印程序状态 | `i SUBCMD` | `i r` `i w`      | 打印寄存器状态 打印监视点信息                                |
 | 扫描内存     | `x N EXPR` | `x 5 0x80000000` | 求出表达式`EXPR`的值, 将结果作为起始内存 地址, 以十六进制形式输出连续的`N`个4字节 |
-| 表达式求值   | `p EXPR`   | `p $eax + 1`     | 求出表达式`EXPR`的值, `EXPR`支持的 运算请见[调试中的表达式求值](https://docs.ysyx.org/ics-pa/1.6.html)小节 |
+| 表达式求值   | `p EXPR`   | `p *$t0 + 0x12`     | 求出表达式`EXPR`的值, 对于riscv64结果为`uint64_t`类型. `EXPR`支持的运算请见[下方BNF定义](#表达式求值接受的表达式的bnf定义) |
 | 设置监视点   | `w EXPR`   | `w *0x2000`      | 当表达式`EXPR`的值发生变化时, 暂停程序执行                   |
 | 删除监视点   | `d N`      | `d 2`            | 删除序号为`N`的监视点                                        |
+
+### 表达式求值接受的表达式的BNF定义
+```sh
+<expr> ::= <decimal-number> # 十进制整数
+  | <hexadecimal-number>    # 以"0x"开头的十六进制整数
+  | <reg_name>              # 以"$"开头
+  | "(" <expr> ")"
+  | <expr> "+" <expr>
+  | <expr> "-" <expr>
+  | <expr> "*" <expr>
+  | <expr> "/" <expr>
+  | <expr> "==" <expr>
+  | <expr> "!=" <expr>
+  | <expr> "&&" <expr>
+  | "*" <expr>              # 指针解引用
+```
 
 ## nemu riscv64的实现
 
