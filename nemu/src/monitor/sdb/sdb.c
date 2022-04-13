@@ -74,17 +74,19 @@ static int cmd_i(char *args) {
 static int cmd_x(char *args) {
   /* extract the first argument */
   char *arg = strtok(NULL, " ");
-  printf(">>>%s<<<", arg);
 
   if (arg == NULL) {
     ERROR("Missing N: how many words to scan\n");
   } else {
+    int N = strtol(arg, NULL, 10);
+    args += strlen(arg);
+    printf(">>>%s<<<", args);
     // TODO: only accept hex number for now
     bool success;
-    word_t expression = expr(strtok(NULL, " "), &success);
+    word_t expression = expr(args, &success);
     printf(" starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expression);
     printf(ASNI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ASNI_DIM));
-    for (int i = 0; i < strtol(arg, NULL, 10); i++) {
+    for (int i = 0; i < N; i++) {
       printf(ASNI_FG_WHITE "%8lx" ASNI_NONE ":", i * sizeof(word_t));
       // print a word of memory by bytes, high order bytes first
       for (int j = sizeof(word_t) - 1; j >= 0; j--) {
