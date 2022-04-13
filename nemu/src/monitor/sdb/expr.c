@@ -265,7 +265,7 @@ word_t eval(int p, int q, bool *success) {
         // process unary operators: negative sign, dereference
         if (tokens[p].type == TK_NEG) { return -eval(p + 1, q, success); }
         if (tokens[p].type == TK_DEREF) {
-          return vaddr_read(strtol(tokens[q].str, NULL, 10), sizeof(word_t));
+          return vaddr_read(eval(p + 1, q, success), sizeof(word_t));
         }
         ERROR("Missing operator\n");
       }
