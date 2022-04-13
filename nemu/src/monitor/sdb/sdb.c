@@ -79,10 +79,8 @@ static int cmd_x(char *args) {
     ERROR("Missing N: how many words to scan\n");
   } else {
     int N = strtol(arg, NULL, 10);
-    printf("%lu", strlen(arg));
-    arg += strlen(arg) + 1;
-    printf(">>>%s<<<", arg);
-    // TODO: only accept hex number for now
+    arg += strlen(arg) + 2;
+
     bool success;
     word_t expression = expr(arg, &success);
     printf(" starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expression);
