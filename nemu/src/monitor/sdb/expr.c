@@ -151,11 +151,6 @@ static bool make_token(char *e) {
   // print all tokens
   for (i = 0; i < ARRLEN(tokens); i++) {
     printf("│ %d: %s", i, getTypeValue(&tokens[i]));
-    // if (tokens[i].type < 256) {
-    //   printf("│ %d: %c, %s\t", i, tokens[i].type, tokens[i].str);
-    // } else {
-    //   printf("│ %d: %d, %s\t", i, tokens[i].type, tokens[i].str);
-    // }
   }
   printf("\n");
   #endif // DEBUG_expr
@@ -260,9 +255,6 @@ word_t eval(int p, int q, bool *success) {
         ERROR("Missing brackets\n");
         *success = false;
         return false;
-      } else if (op != -1 && precedence == 0) {
-        // just an acceleration
-        break;
       }
     }
 
