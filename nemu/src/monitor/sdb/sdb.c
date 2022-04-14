@@ -28,7 +28,7 @@ static char *rl_gets() {
   }
 
   // Meaning of \001 and \002, see: https://stackoverflow.com/a/55773513/10088906
-  line_read = readline("\001" ASNI_FG_NORMAL_PINK "\002\001" ASNI_NONE ASNI_BG_PINK "\002nemu\001" ASNI_NONE ASNI_FG_NORMAL_PINK "\002\001" ASNI_NONE "\002 ");
+  line_read = readline("\001" ANSI_FG_NORMAL_PINK "\002\001" ANSI_NONE ANSI_BG_PINK "\002nemu\001" ANSI_NONE ANSI_FG_NORMAL_PINK "\002\001" ANSI_NONE "\002 ");
 
   if (line_read && *line_read) {
     add_history(line_read);
@@ -83,14 +83,14 @@ static int cmd_x(char *args) {
 
     bool success;
     word_t expression = expr(arg, &success);
-    printf(" starting from 0x" ASNI_FMT("%lx", ASNI_FG_WHITE) "\n", expression);
-    printf(ASNI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ASNI_DIM));
+    printf(" starting from 0x" ANSI_FMT("%lx", ANSI_FG_WHITE) "\n", expression);
+    printf(ANSI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ANSI_DIM));
     for (int i = 0; i < N; i++) {
-      printf(ASNI_FG_WHITE "%8lx" ASNI_NONE ":", i * sizeof(word_t));
+      printf(ANSI_FG_WHITE "%8lx" ANSI_NONE ":", i * sizeof(word_t));
       // print a word of memory by bytes, high order bytes first
       for (int j = sizeof(word_t) - 1; j >= 0; j--) {
         word_t value = vaddr_read(expression + i * 4 + j, 1);
-        printf(" %s%02lx%s", value == 0 ? ASNI_DIM : ASNI_FG_NORMAL_GREEN, value, ASNI_NONE);
+        printf(" %s%02lx%s", value == 0 ? ANSI_DIM : ANSI_FG_NORMAL_GREEN, value, ANSI_NONE);
       }
       printf("\n");
     }
@@ -102,7 +102,7 @@ static int cmd_p(char *args) {
   bool success;
   word_t value = expr(args, &success);
   if (success) {
-    printf("result: " ASNI_FMT("%lu | %016lx\n", ASNI_FG_NORMAL_GREEN), value, value);
+    printf("result: " ANSI_FMT("%lu | %16lx\n", ANSI_FG_NORMAL_GREEN), value, value);
   }
   return 0;
 }

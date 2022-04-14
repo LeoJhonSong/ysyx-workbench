@@ -83,6 +83,11 @@ C中没有原生字符串 (raw string), 因此要匹配元字符本身或者转�
 
 ### 杂
 
+#### static关键字
+
+- https://stackoverflow.com/a/572550/10088906
+- https://akaedu.github.io/book/ch20s02.html#id2787367
+
 #### used attribute
 
 ```c

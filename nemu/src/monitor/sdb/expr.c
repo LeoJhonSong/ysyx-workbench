@@ -211,7 +211,7 @@ word_t eval(int p, int q, bool *success) {
       return 0;
     }
     int op = -1;         // Position of the main operator in the token expression
-    uint precedence = 0; // precedence of op, initial with highest precedence - 1
+    uint precedence = 0; // precedence of op, initial with highest_precedence - 1 = 0
     int current_precedence;
     int pair_acc = 0;
     // Find the main operator. main operator is:
@@ -220,7 +220,7 @@ word_t eval(int p, int q, bool *success) {
     // - With lowest precedence in the expression
     // - When there are multiple operators with same precedence, the right most one is what we want
     for (int i = q; i >= p; i--) {
-      current_precedence = 1;
+      current_precedence = 1; // initial with highest_precedence
       switch (tokens[i].type) {
         case '(': pair_acc += 1; break;
         case ')': pair_acc -= 1; break;
