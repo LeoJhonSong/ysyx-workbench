@@ -110,7 +110,7 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
-    wp_link *wp = new_wp();
+    wp_link wp = new_wp();
     printf(">>>%d<<<\n", wp->NO);
     return 0;
 }
