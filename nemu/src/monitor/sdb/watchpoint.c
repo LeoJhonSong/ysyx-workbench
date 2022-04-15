@@ -26,11 +26,12 @@ void init_wp_pool() {
 ///
 ///@return WP* The first watchpoint from free_
 ///
-void new_wp() {
+wp_link new_wp() {
     wp_link p = free_;
     free_ = free_->next;
     p->next = head;
     head = p;
+    return head;
 }
 
 ///
@@ -51,7 +52,9 @@ void free_wp_by_idx(int idx){
 }
 
 void print_wps() {
+    int i = 0;
     for (wp_link p = head; p; p = p->next) {
-        printf("%d\n", p->NO);
+        printf("%d: [%d]\n", i, p->NO);
+        i++;
     }
 }
