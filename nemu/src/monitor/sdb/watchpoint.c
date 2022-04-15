@@ -80,7 +80,7 @@ void free_wp_by_idx(int idx) {
 void print_wps() {
     int i = 0;
     for (wp_link p = head; p; p = p->next) {
-        printf("%2d │ %s\n", i, p->expr);
+        printf(ANSI_FMT("%2d", ANSI_FG_NORMAL_CYAN) " │ " ANSI_FMT("%s", ANSI_FG_NORMAL_BLUE) " = " ANSI_FMT("%lu", ANSI_FG_NORMAL_GREEN) "\n", i, p->expr, p->value);
         i++;
     }
 }
