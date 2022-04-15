@@ -26,10 +26,11 @@ void init_wp_pool() {
 ///
 ///@return WP* The first watchpoint from free_
 ///
-wp_link new_wp() {
+void new_wp() {
     wp_link p = free_;
     free_ = free_->next;
-    return p;
+    p->next = head;
+    head = p;
 }
 
 ///
