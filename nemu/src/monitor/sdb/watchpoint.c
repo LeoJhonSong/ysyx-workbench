@@ -100,7 +100,7 @@ bool wps_check() {
         word_t value = expr(p->expr, &success);
         if (p->value != value) {
             is_changed = true;
-            printf("value of watchpoint " ANSI_FMT("%d", ANSI_FG_NORMAL_CYAN) " with expression " ANSI_FMT("%s", ANSI_FG_NORMAL_BLUE) " changes from" ANSI_FMT("%lu", ANSI_FG_NORMAL_GREEN) "to " ANSI_FMT("%lu", ANSI_FG_NORMAL_GREEN), i, p->expr, p->value, value);
+            printf("value of watchpoint " ANSI_FMT("%d", ANSI_FG_NORMAL_CYAN) " with expression " ANSI_FMT("%s", ANSI_FG_NORMAL_BLUE) " changes from " ANSI_FMT("%lu", ANSI_FG_NORMAL_GREEN) " to " ANSI_FMT("%lu\n", ANSI_FG_NORMAL_GREEN), i, p->expr, p->value, value);
             p->value = value;
         }
         i++;
