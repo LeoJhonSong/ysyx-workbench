@@ -8,7 +8,7 @@ typedef struct watchpoint *wp_link;
 struct watchpoint {
     int NO;       ///< number of watchpoint, almost only for debug
     wp_link next; ///< pointer to next element
-    char *str;
+    char *expr;
 
     /* TODO: Add more members if necessary */
 };

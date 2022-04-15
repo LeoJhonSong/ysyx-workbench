@@ -30,15 +30,15 @@ void init_wp_pool() {
 ///
 ///@return WP* The first watchpoint from free_, also the head
 ///
-void new_wp(char *str) {
+void new_wp(char *expr) {
     if (wps_in_use == NR_WP) {
         ERROR("All %d watchpoints are in use, no more idle watchpoints\n", NR_WP);
     } else {
         wp_link p = free_;
         free_ = free_->next;
         p->next = head;
-        printf("%s\n", str);
-        p->str = str;
+        printf("%s\n", expr);
+        p->expr = expr;
         head = p;
         wps_in_use++;
     }
@@ -75,7 +75,7 @@ void free_wp_by_idx(int idx) {
 void print_wps() {
     int i = 0;
     for (wp_link p = head; p; p = p->next) {
-        printf("%d: >>>%s<<<\n", i, p->str);
+        printf("%d: >>>%s<<<\n", i, p->expr);
         i++;
     }
 }
