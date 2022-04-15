@@ -46,7 +46,7 @@ wp_link new_wp() {
 ///
 void free_wp_by_idx(int idx) {
     if (idx < 0 || idx >= wps_in_use) {
-        ERROR("index %d out of range of 0<= idx <= %d", idx, wps_in_use - 1);
+        ERROR("index %d out of range of 0<= idx <= %d\n", idx, wps_in_use - 1);
     } else {
         wp_link p = head;
         if (idx == 0) {
