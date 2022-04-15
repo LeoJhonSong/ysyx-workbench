@@ -33,7 +33,7 @@ void init_wp_pool() {
 ///
 ///@return WP* The first watchpoint from free_
 ///
-WP *new_wp();
+WP *new_wp(){ return 0; }
 
 ///
 ///@brief Free a watchpoint from head to free_
