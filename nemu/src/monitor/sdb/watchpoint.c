@@ -37,6 +37,7 @@ void new_wp(char *str) {
         wp_link p = free_;
         free_ = free_->next;
         p->next = head;
+        printf("%s\n", str);
         p->str = str;
         head = p;
         wps_in_use++;
