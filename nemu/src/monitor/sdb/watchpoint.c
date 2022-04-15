@@ -1,11 +1,13 @@
+#include "common.h"
 #include "debug.h"
 #include "sdb.h"
 #include "utils.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
-#define NR_WP 12 // number range of watchpoint
+#define NR_WP 32 // number range of watchpoint
 
 static struct watchpoint wp_pool[NR_WP] = {};
 static wp_link head = NULL;  // watchpoints in use
@@ -29,16 +31,19 @@ void init_wp_pool() {
 ///
 ///@brief Pop a watchpoint from free_ and push to head. When no more idle watchpoint in free_, Assert(0) triggered
 ///
-///@return WP* The first watchpoint from free_, also the head
+///@param expr The string of expression the new watchpoint should watch
 ///
-void new_wp(char *expr) {
+void new_wp(char *expr_str) {
     if (wps_in_use == NR_WP) {
         ERROR("All %d watchpoints are in use, no more idle watchpoints\n", NR_WP);
     } else {
         wp_link p = free_;
+        bool success;
+
         free_ = free_->next;
         p->next = head;
-        strcpy(p->expr, expr);
+        strcpy(p->expr, expr_str);
+        p->value = expr(expr_str, &success);
         head = p;
         wps_in_use++;
     }
@@ -78,4 +83,28 @@ void print_wps() {
         printf("%2d │ %s\n", i, p->expr);
         i++;
     }
+}
+
+///
+///@brief Check if value of any watchpoint changes
+///
+///@return true values of some watchpoints change
+///@return false values of all watchpoint keep the same
+///
+bool wps_check() {
+    bool is_changed = false;
+    bool success;
+    int i = 0;
+
+    for (wp_link p = head; p; p = p->next) {
+        word_t value = expr(p->expr, &success);
+        if (p->value != value) {
+            is_changed = true;
+            printf("value of watchpoint " ANSI_FMT("%d", ANSI_FG_NORMAL_CYAN) " with expression " ANSI_FMT("%s", ANSI_FG_NORMAL_BLUE) " changes from" ANSI_FMT("%lu", ANSI_FG_NORMAL_GREEN) "to " ANSI_FMT("%lu", ANSI_FG_NORMAL_GREEN), i, p->expr, p->value, value);
+            p->value = value;
+        }
+        i++;
+    }
+
+    return is_changed;
 }
