@@ -2,14 +2,6 @@
 
 #define NR_WP 32 // number range of watchpoint
 
-typedef struct watchpoint {
-    int NO;                  ///< number of watchpoint
-    struct watchpoint *next; ///< pointer to next element
-
-    /* TODO: Add more members if necessary */
-
-} WP;
-
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL;  // watchpoints in use
 static WP *free_ = NULL; // idle watchpoints
@@ -33,7 +25,7 @@ void init_wp_pool() {
 ///
 ///@return WP* The first watchpoint from free_
 ///
-WP *new_wp(){
+WP *new_wp() {
     WP *p = free_;
     free_ = free_->next;
     return p;

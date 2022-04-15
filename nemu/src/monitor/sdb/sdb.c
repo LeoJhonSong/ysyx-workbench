@@ -108,8 +108,11 @@ static int cmd_p(char *args) {
     return 0;
 }
 
-// static int cmd_w(char *args) {
-// }
+static int cmd_w(char *args) {
+    WP *wp = new_wp();
+    printf(">>>%d<<<\n", wp->NO);
+    return 0;
+}
 
 static int cmd_help(char *args);
 
@@ -124,8 +127,9 @@ static struct {
     /* TODO: Add more commands */
     {"s", "Single step N instructions", cmd_s},
     {"i", "Display register/watchpoint infomation", cmd_i},
-    {"x", "print N 4-bytes in memory start from EXPR", cmd_x},
+    {"x", "Print N 4-bytes in memory start from EXPR", cmd_x},
     {"p", "evaluation value of given expression", cmd_p},
+    {"w", "Set watchpoint of given expression", cmd_w},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
