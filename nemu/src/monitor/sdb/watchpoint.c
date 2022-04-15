@@ -75,7 +75,7 @@ void free_wp_by_idx(int idx) {
 void print_wps() {
     int i = 0;
     for (wp_link p = head; p; p = p->next) {
-        printf("%d: >>>%s<<<\n", i, p->expr);
+        printf("%d: >>>%s<<<\n", i, p->expr + 2);
         i++;
     }
 }
