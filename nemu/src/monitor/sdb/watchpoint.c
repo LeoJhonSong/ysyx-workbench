@@ -30,13 +30,16 @@ void init_wp_pool() {
 ///
 ///@return WP* The first watchpoint from free_, also the head
 ///
-wp_link new_wp() {
-    wp_link p = free_;
-    free_ = free_->next;
-    p->next = head;
-    head = p;
-    wps_in_use++;
-    return head;
+void new_wp() {
+    if (wps_in_use == NR_WP) {
+        ERROR("All %d watchpoints are in use, no more idle watchpoints", NR_WP);
+    } else {
+        wp_link p = free_;
+        free_ = free_->next;
+        p->next = head;
+        head = p;
+        wps_in_use++;
+    }
 }
 
 ///
@@ -45,25 +48,23 @@ wp_link new_wp() {
 ///@param idx The index of the watchpoint in use to pop
 ///
 void free_wp_by_idx(int idx) {
+    wp_link p = head;
     if (idx < 0 || idx >= wps_in_use) {
-        ERROR("index %d out of range of 0<= idx <= %d\n", idx, wps_in_use - 1);
+        ERROR("%d out of range of 0<= index <= %d\n", idx, wps_in_use - 1);
+        return;
+    } else if (idx == 0) {
+        head = head->next;
+        p->next = free_;
+        free_ = p;
     } else {
-        wp_link p = head;
-        if (idx == 0) {
-            head = head->next;
-            p->next = free_;
-            free_ = p;
-        } else {
-            for (int i = 0; i < idx - 1; i++) {
-                p = p->next;
-            }
-            // delete p->next from watchpoints in use and push to free_
-            wp_link rest = p->next->next;
-            p->next->next = free_;
-            free_ = p->next;
-            p->next = rest;
-        }
+        for (int i = 0; i < idx - 1; i++) { p = p->next; }
+        // delete p->next from watchpoints in use and push to free_
+        wp_link rest = p->next->next;
+        p->next->next = free_;
+        free_ = p->next;
+        p->next = rest;
     }
+    wps_in_use--;
 }
 
 ///

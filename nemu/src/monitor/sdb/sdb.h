@@ -12,7 +12,7 @@ struct watchpoint {
     /* TODO: Add more members if necessary */
 };
 
-wp_link new_wp();
+void new_wp();
 void free_wp_by_idx(int idx);
 void print_wps();
 
