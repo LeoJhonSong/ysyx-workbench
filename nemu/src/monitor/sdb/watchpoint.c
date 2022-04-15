@@ -39,13 +39,16 @@ void new_wp(char *expr_str) {
     } else {
         wp_link p = free_;
         bool success;
+        word_t value = expr(expr_str, &success);
 
-        free_ = free_->next;
-        p->next = head;
-        strcpy(p->expr, expr_str);
-        p->value = expr(expr_str, &success);
-        head = p;
-        wps_in_use++;
+        if (success == true) {
+            free_ = free_->next;
+            p->next = head;
+            strcpy(p->expr, expr_str);
+            p->value = value;
+            head = p;
+            wps_in_use++;
+        }
     }
 }
 
