@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#define NR_WP 32 // number range of watchpoint
+#define NR_WP 12 // number range of watchpoint
 
 static struct watchpoint wp_pool[NR_WP] = {};
 static wp_link head = NULL;  // watchpoints in use
@@ -32,7 +32,7 @@ void init_wp_pool() {
 ///
 void new_wp() {
     if (wps_in_use == NR_WP) {
-        ERROR("All %d watchpoints are in use, no more idle watchpoints", NR_WP);
+        ERROR("All %d watchpoints are in use, no more idle watchpoints\n", NR_WP);
     } else {
         wp_link p = free_;
         free_ = free_->next;
