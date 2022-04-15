@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "sdb.h"
 #include <stdio.h>
 
@@ -39,16 +40,23 @@ wp_link new_wp() {
 ///
 ///@param idx The index of the watchpoint in head
 ///
-void free_wp_by_idx(int idx){
+void free_wp_by_idx(int idx) {
+    Assert(idx >= 0 && idx < NR_WP, "index %d out of range of 0<= idx < %d", idx, NR_WP);
     wp_link p = head;
-    for (int i = 0; i < idx - 1; i++) {
-        p = p->next;
+    if (idx == 0) {
+        head = head->next;
+        p->next = free_;
+        free_ = p;
+    } else {
+        for (int i = 0; i < idx - 1; i++) {
+            p = p->next;
+        }
+        // delete p->next from watchpoints in use and push to free_
+        wp_link rest = p->next->next;
+        p->next->next = free_;
+        free_ = p->next;
+        p->next = rest;
     }
-    // delete p->next from watchpoints in use and push to free_
-    wp_link rest = p->next->next;
-    p->next->next = free_;
-    free_ = p->next;
-    p->next = rest;
 }
 
 void print_wps() {
