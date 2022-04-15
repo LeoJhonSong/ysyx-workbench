@@ -1,5 +1,15 @@
 {
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
     "makefile.extensionOutputFolder": "./.vscode",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/leo/Desktop/ysyx-workbench/nemu/build",
+            "binaryPath": "/home/leo/Desktop/ysyx-workbench/nemu/build/riscv64-nemu-interpreter",
+            "binaryArgs": [
+                "--log=/home/leo/Desktop/ysyx-workbench/nemu/build/nemu-log.txt"
+            ]
+        }
+    ],
     "terminal.integrated.profiles.linux": {
         "docker": {
             "path": "docker",
@@ -27,16 +37,4 @@
         "SUBCMD",
         "unprogrammable"
     ],
-    "makefile.launchConfigurations": [
-        {
-            "cwd": "/home/leo/Desktop/ysyx-workbench/nemu/build",
-            "binaryPath": "/home/leo/Desktop/ysyx-workbench/nemu/build/riscv64-nemu-interpreter",
-            "binaryArgs": [
-                "--log=/home/leo/Desktop/ysyx-workbench/nemu/build/nemu-log.txt"
-            ]
-        }
-    ],
-    "files.associations": {
-        "utils.h": "c"
-    },
 }

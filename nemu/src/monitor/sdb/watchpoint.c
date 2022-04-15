@@ -28,6 +28,16 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 
+///
+///@brief Get a new watchpoint from free_. When no more idle watchpoint in free_, Assert(0) triggered
+///
+///@return WP* The first watchpoint from free_
+///
 WP *new_wp();
 
+///
+///@brief Free a watchpoint from head to free_
+///
+///@param wp The watchpoint to free
+///
 void free_wp(WP *wp);
