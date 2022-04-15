@@ -117,8 +117,8 @@ static int cmd_w(char *args) {
 
 static int cmd_d(char *args) {
     char *arg = strtok(NULL, " ");
-    no = strtol(arg, NULL, 10); // The first arg, watchpoint number
-    free_wp_by_idx();
+    int idx = strtol(arg, NULL, 10); // The first arg, watchpoint index
+    free_wp_by_idx(idx);
     return 0;
 }
 
@@ -138,6 +138,7 @@ static struct {
     {"x", "Print N 4-bytes in memory start from EXPR", cmd_x},
     {"p", "evaluation value of given expression", cmd_p},
     {"w", "Set watchpoint of given expression", cmd_w},
+    {"d", "Delete watchpoint by index", cmd_d},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
