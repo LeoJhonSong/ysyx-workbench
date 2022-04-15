@@ -12,6 +12,7 @@
 #include <readline/readline.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static int is_batch_mode = false;
@@ -109,8 +110,15 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
-    WP *wp = new_wp();
+    wp_link *wp = new_wp();
     printf(">>>%d<<<\n", wp->NO);
+    return 0;
+}
+
+static int cmd_d(char *args) {
+    char *arg = strtok(NULL, " ");
+    no = strtol(arg, NULL, 10); // The first arg, watchpoint number
+    free_wp_by_idx();
     return 0;
 }
 

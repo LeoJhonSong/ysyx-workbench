@@ -3,17 +3,18 @@
 
 #include <common.h>
 
-typedef struct watchpoint {
-    int NO;                  ///< number of watchpoint
-    struct watchpoint *next; ///< pointer to next element
+typedef struct watchpoint *wp_link;
+
+struct watchpoint {
+    int NO;       ///< number of watchpoint, almost only for debug
+    wp_link next; ///< pointer to next element
 
     /* TODO: Add more members if necessary */
+};
 
-} WP;
+wp_link new_wp();
+void free_wp_by_idx(int idx);
 
 word_t expr(char *e, bool *success);
-
-WP *new_wp();
-void free_wp(WP *wp);
 
 #endif
