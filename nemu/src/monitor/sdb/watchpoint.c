@@ -3,6 +3,7 @@
 #include "utils.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #define NR_WP 12 // number range of watchpoint
 
@@ -38,7 +39,7 @@ void new_wp(char *expr) {
         free_ = free_->next;
         p->next = head;
         printf("%s\n", expr);
-        p->expr = expr;
+        strcpy(p->expr, expr);
         head = p;
         wps_in_use++;
     }
@@ -75,7 +76,7 @@ void free_wp_by_idx(int idx) {
 void print_wps() {
     int i = 0;
     for (wp_link p = head; p; p = p->next) {
-        printf("%d: >>>%s<<<\n", i, p->expr + 2);
+        printf("%d: >>>%s<<<\n", i, p->expr);
         i++;
     }
 }
