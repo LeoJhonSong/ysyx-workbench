@@ -37,4 +37,5 @@
         "SUBCMD",
         "unprogrammable"
     ],
+    "C_Cpp.errorSquiggles": "Enabled",
 }
