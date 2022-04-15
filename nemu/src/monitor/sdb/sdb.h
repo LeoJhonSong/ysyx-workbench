@@ -14,6 +14,7 @@ struct watchpoint {
 
 wp_link new_wp();
 void free_wp_by_idx(int idx);
+void print_wps();
 
 word_t expr(char *e, bool *success);
 

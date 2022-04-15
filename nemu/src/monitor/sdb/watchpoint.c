@@ -1,4 +1,5 @@
 #include "sdb.h"
+#include <stdio.h>
 
 #define NR_WP 32 // number range of watchpoint
 
@@ -41,9 +42,15 @@ void free_wp_by_idx(int idx){
     for (int i = 0; i < idx - 1; i++) {
         p = p->next;
     }
-    // pop p->next and insert to head of free_
-    wp_link head_rest = p->next->next;
+    // delete p->next from watchpoints in use and push to free_
+    wp_link rest = p->next->next;
     p->next->next = free_;
     free_ = p->next;
-    p->next = head_rest;
+    p->next = rest;
+}
+
+void print_wps() {
+    for (wp_link p = head; p; p = p->next) {
+        printf("%d\n", p->NO);
+    }
 }
