@@ -45,7 +45,7 @@ wp_link new_wp() {
 ///@param idx The index of the watchpoint in use to pop
 ///
 void free_wp_by_idx(int idx) {
-    if (idx < 0 || idx >= NR_WP) {
+    if (idx < 0 || idx >= wps_in_use) {
         ERROR("index %d out of range of 0<= idx <= %d", idx, wps_in_use - 1);
     } else {
         wp_link p = head;
