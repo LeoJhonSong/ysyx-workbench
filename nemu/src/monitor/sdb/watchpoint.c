@@ -38,7 +38,6 @@ void new_wp(char *expr) {
         wp_link p = free_;
         free_ = free_->next;
         p->next = head;
-        printf("%s\n", expr);
         strcpy(p->expr, expr);
         head = p;
         wps_in_use++;
@@ -76,7 +75,7 @@ void free_wp_by_idx(int idx) {
 void print_wps() {
     int i = 0;
     for (wp_link p = head; p; p = p->next) {
-        printf("%d: >>>%s<<<\n", i, p->expr);
+        printf("%2d │ %s\n", i, p->expr);
         i++;
     }
 }
