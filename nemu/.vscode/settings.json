@@ -1,5 +1,14 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/leo/Desktop/ysyx-workbench/nemu/build",
+            "binaryPath": "/home/leo/Desktop/ysyx-workbench/nemu/build/riscv64-nemu-interpreter",
+            "binaryArgs": [
+                "--log=/home/leo/Desktop/ysyx-workbench/nemu/build/nemu-log.txt"
+            ]
+        }
+    ],
     "terminal.integrated.profiles.linux": {
         "docker": {
             "path": "docker",
@@ -16,6 +25,8 @@
         }
     },
     "cSpell.words": [
+        "dnpc",
+        "ITRACE",
         "MBASE",
         "menuconfig",
         "MSIZE",
@@ -25,15 +36,7 @@
         "pmem",
         "snpc",
         "SUBCMD",
-        "unprogrammable"
-    ],
-    "makefile.launchConfigurations": [
-        {
-            "cwd": "/home/leo/Desktop/ysyx-workbench/nemu/build",
-            "binaryPath": "/home/leo/Desktop/ysyx-workbench/nemu/build/riscv64-nemu-interpreter",
-            "binaryArgs": [
-                "--log=/home/leo/Desktop/ysyx-workbench/nemu/build/nemu-log.txt"
-            ]
-        }
+        "unprogrammable",
+        "watchpoint"
     ],
 }

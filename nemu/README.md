@@ -2,18 +2,24 @@
 
 ## 配置
 
-首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig)
+首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig), 将`Base ISA`设置为**riscv64**.
 
-需要改的配置:
-```yaml
-- Base ISA: riscv64
+### 优化选项
+
 - Build Options:
-  - Enable debug information: Yes
-```
+  - Enable link-time optimization: 启用链接时优化. 由于编译器一次只能看到一个编译单元因此无法跨文件范围优化 (如内联). 利用链接时的全局视角能进行更极致的优化. [建议生成release版时默认开启LTO](https://stackoverflow.com/questions/23736507/is-there-a-reason-why-not-to-use-link-time-optimization-lto).
+
+### menuconfig中对调试有帮助的选项
+
+- Build Options:
+  - Enable debug information: 编译时添加GDB调试信息
+  - Enable watchpoint value checking: 开启监视点值的检查. **会导致性能下降**.
+  - Enable address sanitizer: 自动在指针和数组访问前插入用来检查是否越界的代码. **会导致性能下降**.
+    ![](doc/sanitizer.jpg)
 
 ## 编译运行
 
-运行`make run`编译并进入nemu的sdb. 如果需要从命令行额外添加预处理宏, 比如调试`nemu/src/monitor/sdb/expr.c`用的`DEBUG_expr`, 设置到`CFLAGS`: `make run CFLAGS=-DDEBUG_expr`. 不过由于make大概率无法准确根据从命令行添加的宏判断需要重新编译哪些文件, 最好先`make clean`.
+运行`make run`编译并进入nemu的sdb, 如果想只编译不运行执行`make app`. 如果需要从命令行额外添加预处理宏, 比如调试`nemu/src/monitor/sdb/expr.c`用的`DEBUG_expr`, 设置到`CFLAGS`: `make run CFLAGS=-DDEBUG_expr`. 不过由于make大概率无法准确根据从命令行添加的宏判断需要重新编译哪些文件, 最好先`make clean`.
 
 ## sdb
 
@@ -46,6 +52,10 @@ sdb: **S**imple **D**e**B**uger
   | <expr> "&&" <expr>
   | "*" <expr>              # 指针解引用
 ```
+
+### 断点
+
+- [断点的实现](https://ysyx.oscc.cc/docs/ics-pa/1.6.html#断点)
 
 ## nemu riscv64的实现
 
@@ -81,7 +91,17 @@ riscv64有32个64位寄存器 (在`nemu/src/isa/riscv64/include/isa-def.h`中定
 
 C中没有原生字符串 (raw string), 因此要匹配元字符本身或者转义字符时使用的字符串实际上需要多加一个`\`. 最极端的例子是匹配`\`, 需要用的字符串为`"\\\\"`. 过程是这样的: `"\\\\"` (字符串) --转义--> `\\` (正则表达式) --转义--> 匹配`\`. 同理, 想匹配`+`就需要字符串`"\\+"`, 而匹配`-`的话因为-不是元字符,就用`"-"`就行.
 
+### 单链表
+
+sdb中监视点 (`nemu/src/monitor/sdb/watchpoint.c`) 使用[单链表](https://akaedu.github.io/book/ch26s01.html#id2844144)实现.
+
 ### 杂
+
+#### static关键字
+
+在**C**中`static`主要功能只有两种:
+1. 函数内的`static`变量: 用于在调用间保持变量值
+2. 全局`static`变量/`static`函数: [赋予不希望被外界访问到的标识符Internal Linkage](https://akaedu.github.io/book/ch20s02.html#id2787367), 封装模块.
 
 #### used attribute
 
