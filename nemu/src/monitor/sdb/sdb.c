@@ -111,6 +111,7 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
     args += strlen(args) + 1; // +1 to skip the \0
+    printf("%s", args);
     new_wp(args);
     // printf(">>>%d<<<\n", wp->NO);
     return 0;
