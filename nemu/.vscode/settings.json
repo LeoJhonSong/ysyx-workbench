@@ -25,12 +25,15 @@
         }
     },
     "cSpell.words": [
+        "auipc",
         "dnpc",
+        "ebreak",
         "ITRACE",
         "MBASE",
         "menuconfig",
         "MSIZE",
         "NEMU",
+        "NEMUTRAP",
         "paddr",
         "PCRE",
         "pmem",
