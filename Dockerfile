@@ -22,6 +22,7 @@ RUN sed -i '1s/^/Server = https:\/\/mirrors.sjtug.sjtu.edu.cn\/manjaro\/stable\/
         clang \
         verilator \
         gtkwave \
+        riscv64-linux-gnu-gcc \
         vi \
         neovim \
         python-pynvim \
