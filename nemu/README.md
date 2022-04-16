@@ -4,18 +4,22 @@
 
 首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig), 将`Base ISA`设置为**riscv64**.
 
-### menuconfig中对调试有帮助的功能
+### 优化选项
+
+- Build Options:
+  - Enable link-time optimization: 启用链接时优化. 由于编译器一次只能看到一个编译单元因此无法跨文件范围优化 (如内联). 利用链接时的全局视角能进行更极致的优化. [建议生成release版时默认开启LTO](https://stackoverflow.com/questions/23736507/is-there-a-reason-why-not-to-use-link-time-optimization-lto).
+
+### menuconfig中对调试有帮助的选项
 
 - Build Options:
   - Enable debug information: 编译时添加GDB调试信息
   - Enable watchpoint value checking: 开启监视点值的检查. **会导致性能下降**.
   - Enable address sanitizer: 自动在指针和数组访问前插入用来检查是否越界的代码. **会导致性能下降**.
-
-![](doc/sanitizer.jpg)
+    ![](doc/sanitizer.jpg)
 
 ## 编译运行
 
-运行`make run`编译并进入nemu的sdb. 如果需要从命令行额外添加预处理宏, 比如调试`nemu/src/monitor/sdb/expr.c`用的`DEBUG_expr`, 设置到`CFLAGS`: `make run CFLAGS=-DDEBUG_expr`. 不过由于make大概率无法准确根据从命令行添加的宏判断需要重新编译哪些文件, 最好先`make clean`.
+运行`make run`编译并进入nemu的sdb, 如果想只编译不运行执行`make app`. 如果需要从命令行额外添加预处理宏, 比如调试`nemu/src/monitor/sdb/expr.c`用的`DEBUG_expr`, 设置到`CFLAGS`: `make run CFLAGS=-DDEBUG_expr`. 不过由于make大概率无法准确根据从命令行添加的宏判断需要重新编译哪些文件, 最好先`make clean`.
 
 ## sdb
 
@@ -55,7 +59,7 @@ sdb: **S**imple **D**e**B**uger
 
 ## nemu riscv64的实现
 
-- [官方nemu源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
+- [官方NEMU源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
 
 ### 内存
 
@@ -74,6 +78,15 @@ nemu用一个`uint8_t`类型 (也就是一个元素就是一字节) 的大数组
 riscv64有32个64位寄存器 (在`nemu/src/isa/riscv64/include/isa-def.h`中定义, 实例为`cpu.gpr`), 寄存器名在`nemu/src/isa/riscv64/reg.c`中给出.
 
 - riscv32/64的0号寄存器总是存放0.
+
+### 指令周期
+
+- [官方NEMU指令周期实现概述](https://ysyx.oscc.cc/docs/ics-pa/2.2.html#rtfsc-2)
+
+指令周期:
+1. **取指(instruction fetch, IF)**: `inst_fetch()` 本质就是一次内存的访问.
+2. **译码(instruction decode, ID)**: `decode_exec()` 目的是得到指令的操作和操作对象. 💡 不同ISA的opcode会出现在指令的不同位置, 比如RISC-V指令集的opcode在指令最后 (高位在前).
+3. **执行(execute, EX)**
 
 ## 笔记
 
