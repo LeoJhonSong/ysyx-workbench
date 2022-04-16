@@ -113,8 +113,8 @@ config CC_DEBUG
   bool "Enable debug information"
   default n
 
-config WATCHPOINT
-  bool "Enable watchpoint (performance reduction)"
+config WATCHPOINT_CHECK
+  bool "Enable watchpoint value checking (performance reduction)"
   default n
 
 config CC_ASAN
