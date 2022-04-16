@@ -119,7 +119,7 @@ config WP_CHECK
 
 config CC_ASAN
   depends on MODE_SYSTEM
-  bool "Enable address sanitizer(performance reduction)"
+  bool "Enable address sanitizer (performance reduction)"
   default n
 endmenu
 

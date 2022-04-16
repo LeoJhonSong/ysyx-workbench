@@ -4,11 +4,12 @@
 
 首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig), 将`Base ISA`设置为**riscv64**.
 
-### 开启调试信息选项
+### menuconfig中对调试有帮助的功能
 
 - Build Options:
   - Enable debug information: 编译时添加GDB调试信息
-  - Enable address sanitizer
+  - Enable watchpoint value checking: 开启监视点值的检查. **会导致性能下降**.
+  - Enable address sanitizer: 自动在指针和数组访问前插入用来检查是否越界的代码. **会导致性能下降**.
 
 ![](doc/sanitizer.jpg)
 
