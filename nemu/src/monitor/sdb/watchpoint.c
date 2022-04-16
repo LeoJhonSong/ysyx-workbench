@@ -26,10 +26,8 @@ void init_wp_pool() {
     free_ = wp_pool;
 }
 
-/* TODO: Implement the functionality of watchpoint */
-
 ///
-///@brief Pop a watchpoint from free_ and push to head. When no more idle watchpoint in free_, Assert(0) triggered
+///@brief Pop a watchpoint from free_ and push to head with given expression
 ///
 ///@param expr The string of expression the new watchpoint should watch
 ///

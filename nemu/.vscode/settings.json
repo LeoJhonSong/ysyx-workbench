@@ -36,7 +36,7 @@
         "pmem",
         "snpc",
         "SUBCMD",
-        "unprogrammable"
+        "unprogrammable",
+        "watchpoint"
     ],
-    "C_Cpp.errorSquiggles": "Enabled",
 }

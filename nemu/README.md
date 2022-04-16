@@ -2,14 +2,15 @@
 
 ## 配置
 
-首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig)
+首先需要运行`make menuconfig`进行[配置](https://docs.ysyx.org/ics-pa/1.3.html#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9Fkconfig), 将`Base ISA`设置为**riscv64**.
 
-需要改的配置:
-```yaml
-- Base ISA: riscv64
+### 开启调试信息选项
+
 - Build Options:
-  - Enable debug information: Yes
-```
+  - Enable debug information: 编译时添加GDB调试信息
+  - Enable address sanitizer
+
+![](doc/sanitizer.jpg)
 
 ## 编译运行
 
@@ -47,6 +48,10 @@ sdb: **S**imple **D**e**B**uger
   | "*" <expr>              # 指针解引用
 ```
 
+### 断点
+
+- [断点的实现](https://ysyx.oscc.cc/docs/ics-pa/1.6.html#断点)
+
 ## nemu riscv64的实现
 
 - [官方nemu源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
@@ -81,12 +86,17 @@ riscv64有32个64位寄存器 (在`nemu/src/isa/riscv64/include/isa-def.h`中定
 
 C中没有原生字符串 (raw string), 因此要匹配元字符本身或者转义字符时使用的字符串实际上需要多加一个`\`. 最极端的例子是匹配`\`, 需要用的字符串为`"\\\\"`. 过程是这样的: `"\\\\"` (字符串) --转义--> `\\` (正则表达式) --转义--> 匹配`\`. 同理, 想匹配`+`就需要字符串`"\\+"`, 而匹配`-`的话因为-不是元字符,就用`"-"`就行.
 
+### 单链表
+
+sdb中监视点 (`nemu/src/monitor/sdb/watchpoint.c`) 使用[单链表](https://akaedu.github.io/book/ch26s01.html#id2844144)实现.
+
 ### 杂
 
 #### static关键字
 
-- https://stackoverflow.com/a/572550/10088906
-- https://akaedu.github.io/book/ch20s02.html#id2787367
+在**C**中`static`主要功能只有两种:
+1. 函数内的`static`变量: 用于在调用间保持变量值
+2. 全局`static`变量/`static`函数: [赋予不希望被外界访问到的标识符Internal Linkage](https://akaedu.github.io/book/ch20s02.html#id2787367), 封装模块.
 
 #### used attribute
 

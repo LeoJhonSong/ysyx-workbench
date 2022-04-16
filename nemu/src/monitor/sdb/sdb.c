@@ -135,8 +135,8 @@ static struct {
     /* TODO: Add more commands */
     {"s", "Single step N instructions", cmd_s},
     {"i", "Display register/watchpoint infomation", cmd_i},
-    {"x", "Print N 4-bytes in memory start from EXPR", cmd_x},
-    {"p", "evaluation value of given expression", cmd_p},
+    {"x", "Print N words in memory starting from EXPR", cmd_x},
+    {"p", "Evaluation value of given expression", cmd_p},
     {"w", "Set watchpoint of given expression", cmd_w},
     {"d", "Delete watchpoint by index", cmd_d},
 };
