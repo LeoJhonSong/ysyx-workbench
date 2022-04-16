@@ -83,10 +83,11 @@ riscv64有32个64位寄存器 (在`nemu/src/isa/riscv64/include/isa-def.h`中定
 
 - [官方NEMU指令周期实现概述](https://ysyx.oscc.cc/docs/ics-pa/2.2.html#rtfsc-2)
 
-指令周期:
+指令周期: 在`exec_once()`中完成
 1. **取指(instruction fetch, IF)**: `inst_fetch()` 本质就是一次内存的访问.
 2. **译码(instruction decode, ID)**: `decode_exec()` 目的是得到指令的操作和操作对象. 💡 不同ISA的opcode会出现在指令的不同位置, 比如RISC-V指令集的opcode在指令最后 (高位在前).
-3. **执行(execute, EX)**
+3. **执行(execute, EX)**: 在`decode_exec()`中由`INSTPAT()`模式匹配来译码的同时就被执行了.
+4. **更新PC**: 在`decode_exec()`中`s->dnpc` (dynamic next pc) 被赋值为 `s->snpc` (static next pc), 在执行完`isa_exec_once()`后立即`cpu.pc = s->dnpc`更新PC.
 
 ## 笔记
 
