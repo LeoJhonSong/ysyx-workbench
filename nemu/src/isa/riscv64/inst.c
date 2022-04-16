@@ -52,16 +52,6 @@ static void decode_operand(Decode *s, word_t *dest, word_t *src1, word_t *src2, 
 }
 
 ///
-///@brief Actually decode \b and execute the instruction
-///
-///@param s Pointer to instance of \p Decode struct of current instruction
-///@return Always return 0, useless for now
-///
-static int decode_exec(Decode *s) {
-  word_t dest = 0, src1 = 0, src2 = 0;
-  s->dnpc = s->snpc;
-
-///
 ///@brief instruction of \p s (uint32_t)
 ///
 ///@param s Pointer to instance of \p Decode struct of current instruction
@@ -80,6 +70,16 @@ static int decode_exec(Decode *s) {
   decode_operand(s, &dest, &src1, &src2, concat(TYPE_, type)); \
   __VA_ARGS__ ; \
 }
+
+///
+///@brief Actually decode \b and execute the instruction
+///
+///@param s Pointer to instance of \p Decode struct of current instruction
+///@return Always return 0, useless for now
+///
+static int decode_exec(Decode *s) {
+  word_t dest = 0, src1 = 0, src2 = 0;
+  s->dnpc = s->snpc;
 
   INSTPAT_START();
 
