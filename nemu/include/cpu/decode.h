@@ -23,8 +23,7 @@ __attribute__((always_inline)) static inline void pattern_decode(const wchar_t *
         goto finish;                                                                                 \
     else {                                                                                           \
         wchar_t c = str[i];                                                                             \
-        printf("%lc\n", c); \
-        if (c != ' ' && c != L'│') {                                                                              \
+        if (c != ' ' && c != L"│") {                                                                              \
             Assert(c == '0' || c == '1' || c == '?', "invalid character '%lc' in pattern string", c); \
             __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
             __mask = (__mask << 1) | (c == '?' ? 0 : 1);                                             \
