@@ -21,7 +21,7 @@ __attribute__((always_inline)) static inline void pattern_decode(const char *str
     if ((i) >= len)                                                                                  \
         goto finish;                                                                                 \
     else {                                                                                           \
-        int c = str[i];                                                                             \
+        int c = *(int16_t*)str[i];                                                                             \
         if (c != ' ' && c!= '│') {                                                                              \
             Assert(c == '0' || c == '1' || c == '?', "invalid character '%c' in pattern string", c); \
             __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
