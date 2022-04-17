@@ -1,9 +1,11 @@
+#include "common.h"
 #include "debug.h"
 #include "local-include/reg.h"
 
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
+#include <stdint.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -31,8 +33,9 @@ enum {
 
 // Get immediate value from instruction based on instruction type
 static word_t immI(uint32_t i) { return SEXT(BITS(i, 31, 20), 12); }
-static word_t immU(uint32_t i) { return SEXT(BITS(i, 31, 12), 20) << 12; }
 static word_t immS(uint32_t i) { return (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); }
+static word_t immU(uint32_t i) { return SEXT(BITS(i, 31, 12), 20) << 12; }
+static word_t immJ(uint32_t i) { return (SEXT(BITS(i, 31, 31), 1) << 20 | SEXT(BITS(i, 30, 21), 10) << 1 | SEXT(BITS(i, 20, 20), 1) << 11 | SEXT(BITS(i, 19, 12), 8) << 12);}
 
 ///
 ///@brief Extract operands rd, rs1, rs2 from instruction s->isa.inst.val to vars dest, src1, src2
@@ -50,17 +53,26 @@ static void decode_operand(Decode *s, word_t *dest_ptr, word_t *src1_ptr, word_t
     int rs2 = BITS(i, 24, 20);
     destR(rd);
     switch (type) {
+        case TYPE_R:
+            TODO();
+            break;
         case TYPE_I:
             src1R(rs1);
             src2I(immI(i));
-            break;
-        case TYPE_U:
-            src1I(immU(i));
             break;
         case TYPE_S:
             destI(immS(i));
             src1R(rs1);
             src2R(rs2);
+            break;
+        case TYPE_B:
+            TODO();
+            break;
+        case TYPE_U:
+            src1I(immU(i));
+            break;
+        case TYPE_J:
+            TODO();
             break;
     }
 }
@@ -94,6 +106,8 @@ static void decode_operand(Decode *s, word_t *dest_ptr, word_t *src1_ptr, word_t
 ///
 static int decode_exec(Decode *s) {
     word_t dest = 0, src1 = 0, src2 = 0;
+    word_t rd, rs1, rs2, imm = 0;
+
     s->dnpc = s->snpc; // For normal instructions, dynamic next pc should be same with staticc next pc
 
     INSTPAT_START();
@@ -102,18 +116,18 @@ static int decode_exec(Decode *s) {
     // spaces, │ in pattern string are ignored
 
     // RV32I/RV64I Base Integer Instructions
-    // R-type│funct7      │rs2  │rs1  │funct3│rd         │opcode │
-    // I-type│imm[11:0]         │rs1  │funct3│rd         │opcode │
+    // R-type │funct7      │rs2  │rs1  │funct3│rd         │opcode │
+    // I-type │imm[11:0]         │rs1  │funct3│rd         │opcode │
     INSTPAT(L"│????????????      │?????│000   │?????      │1100111│", I, jalr, TODO());
     INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, ld, R(dest) = Mr(src1 + src2, 8));
     INSTPAT(L"│????????????      │?????│000   │?????      │0010011│", I, addi, TODO());
     INSTPAT(L"│000000000001      │00000│000   │00000      │1110011│", I, ebreak, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
-    // S-type│imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
+    // S-type │imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
     INSTPAT(L"│???????     │?????│?????│011   │?????      │0100011│", S, sd, Mw(src1 + dest, 8, src2));
-    // B-type│imm[12|10:5]│rs2  │rs1  │funct3│imm[4:1|11]│opcode │
-    // U-type│imm[31:12]                     │rd         │opcode │
+    // B-type │imm[12|10:5]│rs2  │rs1  │funct3│imm[4:1|11]│opcode │
+    // U-type │imm[31:12]                     │rd         │opcode │
     INSTPAT(L"│????????????????????           │?????      │0010111│", U, auipc, R(dest) = src1 + s->pc);
-    // J-type│imm[20|10:1|11|19:12]          │rd         │opcode │
+    // J-type │imm[20|10:1|11|19:12]          │rd         │opcode │
     INSTPAT(L"│????????????????????           │?????      │1101111│", J, jal, TODO());
 
     // If an instruction does not match any pattern of above, it is invalid

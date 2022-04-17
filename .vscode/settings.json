@@ -18,8 +18,11 @@
     "cSpell.words": [
         "addi",
         "auipc",
+        "dnpc",
         "ebreak",
         "jalr",
-        "nemu"
+        "nemu",
+        "NEMUTRAP",
+        "snpc"
     ],
 }
