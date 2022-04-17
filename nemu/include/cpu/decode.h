@@ -22,7 +22,7 @@ __attribute__((always_inline)) static inline void pattern_decode(const wchar_t *
     if ((i) >= len)                                                                                  \
         goto finish;                                                                                 \
     else {                                                                                           \
-        wchar_t c = *str[i];                                                                             \
+        wchar_t c = str[i];                                                                             \
         if (c != ' ' && c!= '│') {                                                                              \
             Assert(c == '0' || c == '1' || c == '?', "invalid character '%c' in pattern string", c); \
             __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
