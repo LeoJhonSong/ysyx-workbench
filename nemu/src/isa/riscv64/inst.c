@@ -41,7 +41,9 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
     int rs2 = BITS(i, 24, 20);
     switch (type) {
         case TYPE_R:
-            TODO();
+            *rd_pptr = &R(rd);
+            *rs1_pptr = &R(rs1);
+            *rs2_pptr = &R(rs2);
             break;
         case TYPE_I:
             *rd_pptr = &R(rd);
@@ -54,7 +56,9 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
             *imm_ptr = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);
             break;
         case TYPE_B:
-            TODO();
+            *rs1_pptr = &R(rs1);
+            *rs2_pptr = &R(rs2);
+            *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 12 | SEXT(BITS(i, 30, 25), 6) << 5 | SEXT(BITS(i, 11, 8), 4) | SEXT(BITS(i, 7, 7), 1));
             break;
         case TYPE_U:
             *rd_pptr = &R(rd);
@@ -113,7 +117,7 @@ static int decode_exec(Decode *s) {
     // R-type │funct7      │rs2  │rs1  │funct3│rd         │opcode │
     // I-type │imm[11:0]         │rs1  │funct3│rd         │opcode │
     INSTPAT(L"│????????????      │?????│000   │?????      │1100111│", I, rd = s->pc + 4; s->dnpc = rs1 + imm);   // jalr
-    INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, rd = Mr(rs1 + imm, 8));                 // ld
+    INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, rd = Mr(rs1 + imm, 8); rs1 = rs2);                 // ld
     INSTPAT(L"│????????????      │?????│000   │?????      │0010011│", I, rd = rs1 + imm);                        // addi
     INSTPAT(L"│000000000001      │00000│000   │00000      │1110011│", I, NEMUTRAP(s->pc, R(10)));                // ebreak, Note: R(10) is $a0
     // S-type │imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
