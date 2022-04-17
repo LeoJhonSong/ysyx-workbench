@@ -76,7 +76,6 @@ finish:
 ///
 ///@param pattern The pattern string
 ///@param type Type of the instruction
-///@param name Name of the instruction
 ///@param body Operation of the instruction
 ///
 #define INSTPAT(pattern, ...)                                          \
