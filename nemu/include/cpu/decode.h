@@ -2,6 +2,7 @@
 #define __CPU_DECODE_H__
 
 #include <isa.h>
+#include <wchar.h>
 
 ///
 ///@brief All data needed to execute an instruction
@@ -15,13 +16,13 @@ typedef struct Decode {
 } Decode;
 
 // --- pattern matching mechanism ---
-__attribute__((always_inline)) static inline void pattern_decode(const char *str, int len, uint32_t *key, uint32_t *mask, uint32_t *shift) {
+__attribute__((always_inline)) static inline void pattern_decode(const wchar_t *str, int len, uint32_t *key, uint32_t *mask, uint32_t *shift) {
     uint32_t __key = 0, __mask = 0, __shift = 0;
 #define macro(i)                                                                                     \
     if ((i) >= len)                                                                                  \
         goto finish;                                                                                 \
     else {                                                                                           \
-        int16_t c = *str[i];                                                                             \
+        wchar_t c = *str[i];                                                                             \
         if (c != ' ' && c!= '│') {                                                                              \
             Assert(c == '0' || c == '1' || c == '?', "invalid character '%c' in pattern string", c); \
             __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
