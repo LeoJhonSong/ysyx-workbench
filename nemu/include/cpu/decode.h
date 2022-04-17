@@ -22,7 +22,7 @@ __attribute__((always_inline)) static inline void pattern_decode(const char *str
         goto finish;                                                                                 \
     else {                                                                                           \
         char c = str[i];                                                                             \
-        if (c != ' ') {                                                                              \
+        if (c != ' ' && c!= '│') {                                                                              \
             Assert(c == '0' || c == '1' || c == '?', "invalid character '%c' in pattern string", c); \
             __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
             __mask = (__mask << 1) | (c == '?' ? 0 : 1);                                             \
@@ -74,8 +74,8 @@ finish:
 ///@brief Pattern matching wrappers for decode, execute operation defined in \p body once matched
 ///
 ///@param pattern The pattern string
-///@param name Name of the instruction
 ///@param type Type of the instruction
+///@param name Name of the instruction
 ///@param body Operation of the instruction
 ///
 #define INSTPAT(pattern, ...)                                          \

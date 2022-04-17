@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "local-include/reg.h"
 
 #include <cpu/cpu.h>
@@ -12,10 +13,12 @@
 ///@brief Types of instruction
 ///
 enum {
+    TYPE_R,
     TYPE_I,
-    TYPE_U,
     TYPE_S,
-    TYPE_N, // none
+    TYPE_B,
+    TYPE_U,
+    TYPE_J
 };
 
 // usage of do while, see: https://stackoverflow.com/a/257425/10088906
@@ -73,11 +76,11 @@ static void decode_operand(Decode *s, word_t *dest_ptr, word_t *src1_ptr, word_t
 ///@brief Execute operation for current instruction
 ///
 ///@param s Pointer to instance of \p Decode struct of current instruction
-///@param name Name of the instruction
 ///@param type Type of the instruction
+///@param name Name of the instruction
 ///@param body Operation of the instruction
 ///
-#define INSTPAT_MATCH(s, name, type, ... /* body */)                 \
+#define INSTPAT_MATCH(s, type, name, ... /* body */)                 \
     {                                                                \
         decode_operand(s, &dest, &src1, &src2, concat(TYPE_, type)); \
         __VA_ARGS__;                                                 \
@@ -95,15 +98,26 @@ static int decode_exec(Decode *s) {
 
     INSTPAT_START();
 
-    // INSTPAT(pattern string, instruction name, instruction type, instruction operation)
     // Note: only 0/1/? are allowed in pattern string, 0/1 only matches 0/1, ? matches 0 or 1
-    // spaces in pattern string do not participate in matching
-    INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U, R(dest) = src1 + s->pc);
-    INSTPAT("??????? ????? ????? 011 ????? 00000 11", ld, I, R(dest) = Mr(src1 + src2, 8));
-    INSTPAT("??????? ????? ????? 011 ????? 01000 11", sd, S, Mw(src1 + dest, 8, src2));
+    // spaces, │ in pattern string are ignored
 
-    INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
-    INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));                // If an instruction does not match any pattern of above, it is invalid
+    // RV32I/RV64I Base Integer Instructions
+    // R-type│funct7      │rs2  │rs1  │funct3│rd         │opcode │
+    // I-type│imm[11:0]         │rs1  │funct3│rd         │opcode │
+    INSTPAT("│????????????      │?????│000   │?????      │1100111│", I, jalr, TODO());
+    INSTPAT("│????????????      │?????│011   │?????      │0000011│", I, ld, R(dest) = Mr(src1 + src2, 8));
+    INSTPAT("│????????????      │?????│000   │?????      │0010011│", I, addi, TODO());
+    INSTPAT("│000000000001      │00000│000   │00000      │1110011│", I, ebreak, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+    // S-type│imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
+    INSTPAT("│???????     │?????│?????│011   │?????      │0100011│", S, sd, Mw(src1 + dest, 8, src2));
+    // B-type│imm[12|10:5]│rs2  │rs1  │funct3│imm[4:1|11]│opcode │
+    // U-type│imm[31:12]                     │rd         │opcode │
+    INSTPAT("│????????????????????           │?????      │0010111│", U, auipc, R(dest) = src1 + s->pc);
+    // J-type│imm[20|10:1|11|19:12]          │rd         │opcode │
+    INSTPAT("│????????????????????           │?????      │1101111│", J, jal, TODO());
+
+    // If an instruction does not match any pattern of above, it is invalid
+    INSTPAT("│????????????      │?????│???   │?????      │???????│", I, inv, INV(s->pc));
 
     INSTPAT_END();
 

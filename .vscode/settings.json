@@ -15,4 +15,11 @@
             "path": "zsh",
         }
     },
+    "cSpell.words": [
+        "addi",
+        "auipc",
+        "ebreak",
+        "jalr",
+        "nemu"
+    ],
 }
