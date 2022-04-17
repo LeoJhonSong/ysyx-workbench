@@ -6,6 +6,7 @@
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -23,19 +24,11 @@ enum {
     TYPE_J
 };
 
-// usage of do while, see: https://stackoverflow.com/a/257425/10088906
-#define src1R(n) do { *src1_ptr = R(n); } while (0)
-#define src2R(n) do { *src2_ptr = R(n); } while (0)
-#define destR(n) do { *dest_ptr = n; } while (0)
-#define src1I(i) do { *src1_ptr = i; } while (0)
-#define src2I(i) do { *src2_ptr = i; } while (0)
-#define destI(i) do { *dest_ptr = i; } while (0)
-
 ///
 ///@brief Extract operands rd, rs1, rs2 from instruction s->isa.inst.val to vars dest, src1, src2
 ///
 ///@param s Pointer to instance of \p Decode struct of current instruction
-///@param dest Stores operand \p rd
+///@param dest Stores operand \p rd // FIXME: update
 ///@param src1 Stores operand \p rs1
 ///@param src2 Stores operand \p rs2
 ///@param type Type of the instruction
@@ -69,6 +62,7 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
         case TYPE_J:
             *rd_pptr = &R(rd);
             *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 20 | SEXT(BITS(i, 30, 21), 10) << 1 | SEXT(BITS(i, 20, 20), 1) << 11 | SEXT(BITS(i, 19, 12), 8) << 12);
+            printf("---%lx---\n", *imm_ptr);
             break;
         default:
             Assert(0, "Error instruction type\n");

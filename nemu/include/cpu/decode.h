@@ -77,6 +77,7 @@ finish:
 ///@param pattern The pattern string
 ///@param type Type of the instruction
 ///@param body Operation of the instruction
+///@note usage of do while, see: https://stackoverflow.com/a/257425/10088906
 ///
 #define INSTPAT(pattern, ...)                                          \
     do {                                                               \
