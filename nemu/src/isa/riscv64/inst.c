@@ -101,7 +101,6 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
 ///
 static int decode_exec(Decode *s) {
     word_t rd, rs1, rs2, imm;
-    printf("%lx", s->pc);
 
     s->dnpc = s->snpc; // For normal instructions, dynamic next pc should be same with staticc next pc
 
