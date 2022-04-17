@@ -24,7 +24,7 @@ __attribute__((always_inline)) static inline void pattern_decode(const wchar_t *
     else {                                                                                           \
         wchar_t c = str[i];                                                                             \
         if (c != ' ' && c != 0x2502) {                                                                              \
-            Assert(c == '0' || c == '1' || c == '?', "invalid character '%lc' in pattern string", c); \
+            Assert(c == '0' || c == '1' || c == '?', "invalid character '%x' in pattern string", c); \
             __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
             __mask = (__mask << 1) | (c == '?' ? 0 : 1);                                             \
             __shift = (c == '?' ? __shift + 1 : 0);                                                  \
