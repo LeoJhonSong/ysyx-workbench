@@ -24,7 +24,7 @@ image: $(IMAGE).elf
 
 run: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin > output || \
-        cat build/$(ALL)-riscv64-nemu.txt | grep $(shell cat output | sed -n 's/^invalid opcode(PC = *\([^ ]*\) *):/\1/p') | ccze -A || exit 1
+        cat build/$(ALL)-riscv64-nemu.txt | grep $(shell cat output | sed -n 's/^invalid opcode(PC = *\([^ ]*\) *):/\1/p') | ccze -A && exit 1
 
 gdb: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
