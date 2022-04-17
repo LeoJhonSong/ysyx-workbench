@@ -25,12 +25,13 @@ enum {
 };
 
 ///
-///@brief Extract operands rd, rs1, rs2 from instruction s->isa.inst.val to vars dest, src1, src2
+///@brief Extract operands rd, rs1, rs2 from instruction s->isa.inst.val
 ///
 ///@param s Pointer to instance of \p Decode struct of current instruction
-///@param dest Stores operand \p rd // FIXME: update
-///@param src1 Stores operand \p rs1
-///@param src2 Stores operand \p rs2
+///@param rd_pptr Pointer to pointer to rd register \p rd
+///@param rs1_pptr Pointer to pointer to rs1 register \p rs1
+///@param rs2_pptr Pointer to pointer to rs2 register \p rs2
+///@param imm_ptr Pointer to immediate value \p imm
 ///@param type Type of the instruction
 ///
 static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_t **rs2_pptr, word_t *imm_ptr, int type) {
@@ -62,7 +63,6 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
         case TYPE_J:
             *rd_pptr = &R(rd);
             *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 20 | SEXT(BITS(i, 30, 21), 10) << 1 | SEXT(BITS(i, 20, 20), 1) << 11 | SEXT(BITS(i, 19, 12), 8) << 12);
-            printf("---%lx---\n", *imm_ptr);
             break;
         default:
             Assert(0, "Error instruction type\n");
@@ -85,9 +85,9 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
 ///
 ///@param s Pointer to instance of \p Decode struct of current instruction
 ///@param type Type of the instruction
-///@param body Operation of the instruction
+///@param body Operations of the instruction
 ///
-#define INSTPAT_MATCH(s, type, ... /* body */)                               \
+#define INSTPAT_MATCH(s, type, ... /* body */)                                     \
     {                                                                              \
         decode_operand(s, &rd_ptr, &rs1_ptr, &rs2_ptr, &imm, concat(TYPE_, type)); \
         __VA_ARGS__;                                                               \
@@ -112,17 +112,17 @@ static int decode_exec(Decode *s) {
     // RV32I/RV64I Base Integer Instructions
     // R-type │funct7      │rs2  │rs1  │funct3│rd         │opcode │
     // I-type │imm[11:0]         │rs1  │funct3│rd         │opcode │
-    INSTPAT(L"│????????????      │?????│000   │?????      │1100111│", I, rd = s->pc + 4; s->dnpc = rs1 + imm); // jalr
-    INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, rd = Mr(rs1 + imm, 8));       //  ld
-    INSTPAT(L"│????????????      │?????│000   │?????      │0010011│", I, rd = rs1 + imm);              //  addi
-    INSTPAT(L"│000000000001      │00000│000   │00000      │1110011│", I, NEMUTRAP(s->pc, R(10)));         //  ebreak Note: R(10) is $a0
+    INSTPAT(L"│????????????      │?????│000   │?????      │1100111│", I, rd = s->pc + 4; s->dnpc = rs1 + imm);   // jalr
+    INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, rd = Mr(rs1 + imm, 8));                 // ld
+    INSTPAT(L"│????????????      │?????│000   │?????      │0010011│", I, rd = rs1 + imm);                        // addi
+    INSTPAT(L"│000000000001      │00000│000   │00000      │1110011│", I, NEMUTRAP(s->pc, R(10)));                // ebreak, Note: R(10) is $a0
     // S-type │imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
-    INSTPAT(L"│???????     │?????│?????│011   │?????      │0100011│", S, Mw(rs1 + imm, 8, rs2)); //  sd
+    INSTPAT(L"│???????     │?????│?????│011   │?????      │0100011│", S, Mw(rs1 + imm, 8, rs2));                 // sd
     // B-type │imm[12|10:5]│rs2  │rs1  │funct3│imm[4:1|11]│opcode │
     // U-type │imm[31:12]                     │rd         │opcode │
-    INSTPAT(L"│????????????????????           │?????      │0010111│", U, rd = s->pc + imm); //  auipc
+    INSTPAT(L"│????????????????????           │?????      │0010111│", U, rd = s->pc + imm);                      // auipc
     // J-type │imm[20|10:1|11|19:12]          │rd         │opcode │
-    INSTPAT(L"│????????????????????           │?????      │1101111│", J, rd = s->pc + 4; s->dnpc = s->pc + imm); //  jal
+    INSTPAT(L"│????????????????????           │?????      │1101111│", J, rd = s->pc + 4; s->dnpc = s->pc + imm); // jal
 
     // If an instruction does not match any pattern of above, it is invalid
     INSTPAT(L"│????????????      │?????│???   │?????      │???????│", I, INV(s->pc));

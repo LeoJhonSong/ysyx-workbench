@@ -26,11 +26,11 @@ cd am-kernels/tests/cpu-tests
 # 编译cpu-test/tests下的dummy.c程序并用riscv64-nemu运行
 make ARCH=riscv64-nemu ALL=dummy run
 # 查看反汇编结果
-cat dummy-riscv64-nemu.txt
+cat build/dummy-riscv64-nemu.txt
 # 查看.elf文件信息
-riscv64-linux-gnu-readelf dummy-riscv64-nemu.elf <option(s)>
+riscv64-linux-gnu-readelf build/dummy-riscv64-nemu.elf <option(s)>
 # 查看.o文件信息
-riscv64-linux-gnu-objdump riscv64-nemu/tests/dummy.o  <option(s)>
+riscv64-linux-gnu-objdump build/riscv64-nemu/tests/dummy.o  <option(s)>
 ```
 
 ## 使用
