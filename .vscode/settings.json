@@ -15,5 +15,14 @@
             "path": "zsh",
         }
     },
-    "terminal.integrated.defaultProfile.linux": "docker"
+    "cSpell.words": [
+        "addi",
+        "auipc",
+        "dnpc",
+        "ebreak",
+        "jalr",
+        "nemu",
+        "NEMUTRAP",
+        "snpc"
+    ],
 }
