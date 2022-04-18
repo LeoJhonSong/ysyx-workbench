@@ -24,7 +24,7 @@ image: $(IMAGE).elf
 
 .ONESHELL:
 run: image
-	output=$(shell $(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin)
+	$(eval output=$(shell $(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin))
 	@echo test test test
 	@echo $(output)
         # cat build/$(ALL)-riscv64-nemu.txt | grep $(shell cat output | sed -n 's/^invalid opcode(PC = *\([^ ]*\) *):/\1/p') | ccze -A
