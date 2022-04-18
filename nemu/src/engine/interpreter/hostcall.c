@@ -24,7 +24,7 @@ void invalid_inst(vaddr_t thispc) {
   disassemble(assemble_str, 128, thispc, (uint8_t *)&inst, 4);
   char opcode[8];
   snprintf(opcode, ARRLEN(opcode), "test");
-  ERROR("Invalid instruction!\n");
+  printf(ANSI_FMT(" Invalid instruction!\n", ANSI_FG_YELLOW));
   printf("assemble:\t" ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
   printf("opcode:\t\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
   printf("PC:\t\t" ANSI_FMT(FMT_WORD "\n", ANSI_FG_WHITE), thispc);
