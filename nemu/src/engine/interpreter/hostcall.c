@@ -19,7 +19,7 @@ void invalid_inst(vaddr_t thispc) {
   char assemble_str[128];
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(assemble_str, 128, thispc, (uint8_t *)&inst, 4);
-  ERROR("Invalid instruction!\n\tassemble: %s\n\topcode (last 7 bits): %u\nPC: " FMT_WORD "\n", assemble_str, inst & 0b1111111, thispc);
+  ERROR("Invalid instruction!\n\tassemble: %s\n\topcode (last 7 bits): %u\n\tPC: " FMT_WORD "\n", assemble_str, inst & 0b1111111, thispc);
 
   // printf("There are two cases which will trigger this unexpected exception:\n"
   //     "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
