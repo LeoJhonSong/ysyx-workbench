@@ -22,7 +22,6 @@ image: $(IMAGE).elf
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
-.ONESHELL:
 run: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE)
         # cat build/$(ALL)-riscv64-nemu.txt | grep $(shell cat output | sed -n 's/^invalid opcode(PC = *\([^ ]*\) *):/\1/p') | ccze -A
