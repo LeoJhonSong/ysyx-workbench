@@ -26,8 +26,8 @@ void invalid_inst(vaddr_t thispc) {
   snprintf(opcode, ARRLEN(opcode), "test");
   ERROR("Invalid instruction!\n");
   printf("assemble:\t" ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
-  printf("opcode:\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
-  printf("PC:\t" ANSI_FMT(FMT_WORD "\n", ANSI_FG_WHITE), thispc);
+  printf("opcode:\t\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
+  printf("PC:\t\t" ANSI_FMT(FMT_WORD "\n", ANSI_FG_WHITE), thispc);
 
   // printf("There are two cases which will trigger this unexpected exception:\n"
   //     "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
