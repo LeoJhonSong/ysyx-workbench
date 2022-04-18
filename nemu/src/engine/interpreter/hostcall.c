@@ -24,7 +24,6 @@ __attribute__((noinline)) void invalid_inst(vaddr_t thispc) {
     char opcode[8];
     char *opcode_ptr = opcode;
     for (int i = 6; i >= 0; i--) { opcode_ptr += snprintf(opcode_ptr, ARRLEN(opcode), "%d", ((inst & 0b1111111) >> i) & 0b1); }
-    printf("%x\n", inst & 0b1111111);
     printf(ANSI_FMT(" Invalid instruction!\n", ANSI_FG_YELLOW));
     printf("assemble:\t" ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
     printf("opcode:\t\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
