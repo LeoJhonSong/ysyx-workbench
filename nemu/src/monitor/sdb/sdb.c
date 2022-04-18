@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int is_batch_mode = false;
+int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
