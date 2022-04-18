@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <utils.h>
 #include <cpu/ifetch.h>
 #include <isa.h>
@@ -12,20 +13,13 @@ void set_nemu_state(int state, vaddr_t pc, int halt_ret) {
 
 __attribute__((noinline))
 void invalid_inst(vaddr_t thispc) {
-  uint32_t temp[2];
   vaddr_t pc = thispc;
-  temp[0] = inst_fetch(&pc, 4);
-  temp[1] = inst_fetch(&pc, 4);
+  uint32_t inst = inst_fetch(&pc, 4);
 
-  uint8_t *p = (uint8_t *)temp;
-  printf("invalid opcode(PC = " FMT_WORD "):\n"
-      "\t%02x %02x %02x %02x %02x %02x %02x %02x ...\n"
-      "\t%08x %08x...\n",
-      thispc, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], temp[0], temp[1]);
   char assemble_str[128];
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-  disassemble(assemble_str, 128, thispc, (uint8_t *)&temp[0], 4);
-  ERROR("%s\n", assemble_str);
+  disassemble(assemble_str, 128, thispc, (uint8_t *)&inst, 4);
+  ERROR("Invalid instruction!\n\tassemble: %s\n\topcode (last 7 bits): %uPC: " FMT_WORD "\n", assemble_str, inst & 0b1111111, thispc);
 
   printf("There are two cases which will trigger this unexpected exception:\n"
       "1. The instruction at PC = " FMT_WORD " is not implemented.\n"

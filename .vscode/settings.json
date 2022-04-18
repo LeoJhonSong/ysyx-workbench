@@ -27,8 +27,4 @@
         "sltiu",
         "snpc"
     ],
-    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
-    "files.associations": {
-        "decode.h": "c"
-    },
 }
