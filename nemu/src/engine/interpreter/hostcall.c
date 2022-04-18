@@ -23,7 +23,11 @@ void invalid_inst(vaddr_t thispc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(assemble_str, 128, thispc, (uint8_t *)&inst, 4);
   char opcode[8];
-  snprintf(opcode, ARRLEN(opcode), "test");
+  char *opcode_ptr = opcode;
+  for (int i = 6; i >= 0; i--) {
+    opcode_ptr += snprintf(opcode_ptr, ARRLEN(opcode), "%d", ((inst & 0b1111111) >> i) & 0b1);
+  }
+  printf("%x\n", inst & 0b1111111);
   printf(ANSI_FMT(" Invalid instruction!\n", ANSI_FG_YELLOW));
   printf("assemble:\t" ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
   printf("opcode:\t\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
