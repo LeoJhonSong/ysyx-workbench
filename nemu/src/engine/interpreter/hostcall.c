@@ -1,8 +1,11 @@
-#include <stdint.h>
-#include <utils.h>
+#include "macro.h"
+
+#include <cpu/difftest.h>
 #include <cpu/ifetch.h>
 #include <isa.h>
-#include <cpu/difftest.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <utils.h>
 
 void set_nemu_state(int state, vaddr_t pc, int halt_ret) {
   difftest_skip_ref();
@@ -19,7 +22,9 @@ void invalid_inst(vaddr_t thispc) {
   char assemble_str[128];
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(assemble_str, 128, thispc, (uint8_t *)&inst, 4);
-  ERROR("Invalid instruction!\n\tassemble: %s\n\topcode (last 7 bits): %u\n\tPC: " FMT_WORD "\n", assemble_str, inst & 0b1111111, thispc);
+  char opcode[8];
+  snprintf(opcode, ARRLEN(opcode), "test");
+  ERROR("Invalid instruction!\n\tassemble: %s\n\topcode (last 7 bits): %s\n\tPC: " FMT_WORD "\n", assemble_str, opcode, thispc);
 
   // printf("There are two cases which will trigger this unexpected exception:\n"
   //     "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
