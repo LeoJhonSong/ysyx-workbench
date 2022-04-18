@@ -25,9 +25,9 @@ void invalid_inst(vaddr_t thispc) {
   char opcode[8];
   snprintf(opcode, ARRLEN(opcode), "test");
   ERROR("Invalid instruction!\n");
-  printf(ANSI_FMT("\tassemble: %s\n", ANSI_FG_RED), assemble_str);
-  printf(ANSI_FMT("\topcode (last 7 bits): %s\n", ANSI_FG_NORMAL_GREEN), opcode);
-  printf(ANSI_FMT("\tPC:" FMT_WORD "\n", ANSI_FG_WHITE), thispc);
+  printf("\tassemble: " ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
+  printf("\topcode (last 7 bits): " ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
+  printf("\tPC: " ANSI_FMT(FMT_WORD "\n", ANSI_FG_WHITE), thispc);
 
   // printf("There are two cases which will trigger this unexpected exception:\n"
   //     "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
