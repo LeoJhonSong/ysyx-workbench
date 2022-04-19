@@ -85,15 +85,14 @@ static int cmd_x(char *args) {
 
         bool success;
         word_t expression = expr(arg, &success);
-        printf(" starting from 0x" ANSI_FMT("%lx", ANSI_FG_WHITE) "\n", expression);
-        printf(ANSI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ANSI_DIM));
+        printf(ANSI_FMT(MUXDEF(CONFIG_ISA64, "63        32           0\n                     \n", "31         0\n          \n"), ANSI_DIM));
         for (int i = 0; i < N; i++) {
-            printf(ANSI_FG_WHITE "%8lx" ANSI_NONE ":", i * sizeof(word_t));
             // print a word of memory by bytes, high order bytes first
             for (int j = sizeof(word_t) - 1; j >= 0; j--) {
                 word_t value = vaddr_read(expression + i * 4 + j, 1);
                 printf(" %s%02lx%s", value == 0 ? ANSI_DIM : ANSI_FG_NORMAL_GREEN, value, ANSI_NONE);
             }
+            printf(ANSI_FG_WHITE "%016lx" ANSI_NONE, expression + i * 4);
             printf("\n");
         }
     }
