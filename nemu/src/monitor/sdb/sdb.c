@@ -89,10 +89,10 @@ static int cmd_x(char *args) {
         for (int i = 0; i < N; i++) {
             // print a word of memory by bytes, high order bytes first
             for (int j = sizeof(word_t) - 1; j >= 0; j--) {
-                word_t value = vaddr_read(expression + i * 4 + j, 1);
+                word_t value = vaddr_read(expression + i * 8 + j, 1);
                 printf(" %s%02lx%s", value == 0 ? ANSI_DIM : ANSI_FG_NORMAL_GREEN, value, ANSI_NONE);
             }
-            printf(ANSI_FG_WHITE " %16lx\n" ANSI_NONE, expression + i * 4);
+            printf(ANSI_FG_WHITE " %16lx\n" ANSI_NONE, expression + i * 8);
         }
     }
     return 0;
