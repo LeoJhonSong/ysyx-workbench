@@ -40,7 +40,7 @@ void init_mem() {
   }
 #endif
   Log("physical memory area [0x%08x, " FMT_PADDR "]",
-      CONFIG_MBASE, (paddr_t)CONFIG_MBASE + (paddr_t)CONFIG_MSIZE - 1);
+      CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
 }
 
 word_t paddr_read(paddr_t addr, int len) {
