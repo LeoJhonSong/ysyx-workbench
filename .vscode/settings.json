@@ -17,12 +17,15 @@
     },
     "cSpell.words": [
         "addi",
+        "addiw",
         "auipc",
         "dnpc",
         "ebreak",
         "jalr",
         "nemu",
         "NEMUTRAP",
-        "snpc"
+        "sltiu",
+        "snpc",
+        "thispc"
     ],
 }
