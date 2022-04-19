@@ -24,10 +24,10 @@ __attribute__((noinline)) void invalid_inst(vaddr_t thispc) {
     char opcode[8];
     char *opcode_ptr = opcode;
     for (int i = 6; i >= 0; i--) { opcode_ptr += snprintf(opcode_ptr, ARRLEN(opcode), "%d", ((inst & 0b1111111) >> i) & 0b1); }
-    printf(ANSI_FMT(" Invalid instruction!\n", ANSI_FG_YELLOW));
-    printf("assemble:\t" ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
-    printf("opcode:\t\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
-    printf("PC:\t\t" ANSI_FMT(FMT_WORD "\n", ANSI_FG_WHITE), thispc);
+    fprintf(stderr, ANSI_FMT(" Invalid instruction!\n", ANSI_FG_YELLOW));
+    fprintf(stderr, "assemble:\t" ANSI_FMT("%s\n", ANSI_FG_RED), assemble_str);
+    fprintf(stderr, "opcode:\t\t" ANSI_FMT("%s\n", ANSI_FG_NORMAL_GREEN), opcode);
+    fprintf(stderr, "PC:\t\t" ANSI_FMT(FMT_WORD "\n", ANSI_FG_WHITE), thispc);
 
     // printf("There are two cases which will trigger this unexpected exception:\n"
     //        "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
