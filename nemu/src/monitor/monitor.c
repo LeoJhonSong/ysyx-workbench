@@ -23,7 +23,6 @@ static void welcome() {
 #include <getopt.h>
 
 void sdb_set_batch_mode();
-extern int is_batch_mode;
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
@@ -120,7 +119,7 @@ void init_monitor(int argc, char *argv[]) {
   ));
 
   /* Display welcome message. */
-  if (is_batch_mode == false) {welcome();}
+  welcome();
 }
 #else // CONFIG_TARGET_AM
 static long load_img() {
