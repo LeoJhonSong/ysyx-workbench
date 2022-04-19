@@ -22,7 +22,7 @@ run: run-env
 	$(call git_commit, "run NEMU")
 	@echo $(NEMU_EXEC)
 	-@$(NEMU_EXEC); \
-	echo exit code: $$? >> $(BUILD_DIR)/nemu-log.txt
+	echo nemu exit code: $$? >> $(BUILD_DIR)/nemu-log.txt
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
