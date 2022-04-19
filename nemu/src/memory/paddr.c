@@ -1,3 +1,4 @@
+#include "common.h"
 #include <memory/host.h>
 #include <memory/paddr.h>
 #include <device/mmio.h>
@@ -23,7 +24,7 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 
 static void out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [0x%08x, " FMT_PADDR ") at pc = " FMT_WORD,
-      addr, CONFIG_MBASE, CONFIG_MBASE + CONFIG_MSIZE - 1, cpu.pc);
+      addr, CONFIG_MBASE, (paddr_t)(CONFIG_MBASE + CONFIG_MSIZE - 1), cpu.pc);
 }
 
 void init_mem() {
