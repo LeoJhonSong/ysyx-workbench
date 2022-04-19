@@ -54,7 +54,7 @@ uint64_t get_time();
 #define ANSI_FMT(str, fmt) fmt str ANSI_NONE
 
 // about __VA_OPT__, __VA_ARGS__, see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
-#define ERROR(str, ...) fprintf(stderr, ANSI_FMT(" ERROR: " str, ANSI_FG_RED) __VA_OPT__(,) __VA_ARGS__)
+#define ERROR(str, ...) printf(ANSI_FMT(str, ANSI_FG_RED) __VA_OPT__(,) __VA_ARGS__)
 
 #define log_write(...) IFDEF(CONFIG_TARGET_NATIVE_ELF, \
   do { \

@@ -16,21 +16,7 @@
 # 进容器
 docker exec -it --workdir="/home/student/ysyx-workbench" ysyx-workbench-container zsh -c "source ~/.zshrc && tmux"
 # 生成compile_commands.json且彩色输出的make
-compiledb make build -j16 | ccze -A
-```
-
-```sh
-# cpu-tests
-
-cd am-kernels/tests/cpu-tests
-# 编译cpu-test/tests下的dummy.c程序并用riscv64-nemu运行
-make ARCH=riscv64-nemu ALL=dummy run
-# 查看反汇编结果
-cat build/dummy-riscv64-nemu.txt
-# 查看.elf文件信息
-riscv64-linux-gnu-readelf build/dummy-riscv64-nemu.elf <option(s)>
-# 查看.o文件信息
-riscv64-linux-gnu-objdump build/riscv64-nemu/tests/dummy.o  <option(s)>
+compiledb make build | ccze -A
 ```
 
 ## 使用

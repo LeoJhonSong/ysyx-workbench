@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int is_batch_mode = false;
+static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
@@ -85,7 +85,7 @@ static int cmd_x(char *args) {
 
         bool success;
         word_t expression = expr(arg, &success);
-        printf(" starting from 0x" ANSI_FMT("%lx", ANSI_FG_WHITE) "\n", expression);
+        printf(" starting from 0x" ANSI_FMT("%lx", ANSI_FG_WHITE) "\n", expression);
         printf(ANSI_FMT(MUXDEF(CONFIG_ISA64, "         63        32           0\n                              \n", "         31         0\n                   \n"), ANSI_DIM));
         for (int i = 0; i < N; i++) {
             printf(ANSI_FG_WHITE "%8lx" ANSI_NONE ":", i * sizeof(word_t));
@@ -132,6 +132,7 @@ static struct {
     {"help", "Display informations about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
+    /* TODO: Add more commands */
     {"s", "Single step N instructions", cmd_s},
     {"i", "Display register/watchpoint infomation", cmd_i},
     {"x", "Print N words in memory starting from EXPR", cmd_x},

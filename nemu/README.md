@@ -59,7 +59,7 @@ sdb: **S**imple **D**e**B**uger
 
 ## nemu riscv64的实现
 
-- [官方NEMU源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
+- [官方nemu源代码概述](https://docs.ysyx.oscc.cc/ics-pa/1.3.html)
 
 ### 内存
 
@@ -78,16 +78,6 @@ nemu用一个`uint8_t`类型 (也就是一个元素就是一字节) 的大数组
 riscv64有32个64位寄存器 (在`nemu/src/isa/riscv64/include/isa-def.h`中定义, 实例为`cpu.gpr`), 寄存器名在`nemu/src/isa/riscv64/reg.c`中给出.
 
 - riscv32/64的0号寄存器总是存放0.
-
-### 指令周期
-
-- [官方NEMU指令周期实现概述](https://ysyx.oscc.cc/docs/ics-pa/2.2.html#rtfsc-2)
-
-指令周期: 在`exec_once()`中完成
-1. **取指(instruction fetch, IF)**: `inst_fetch()` 本质就是一次内存的访问.
-2. **译码(instruction decode, ID)**: `decode_exec()` 目的是得到指令的操作和操作对象. 💡 不同ISA的opcode会出现在指令的不同位置, 比如RISC-V指令集的opcode在指令最后 (高位在前).
-3. **执行(execute, EX)**: 在`decode_exec()`中由`INSTPAT()`模式匹配来译码的同时就被执行了.
-4. **更新PC**: 在`decode_exec()`中`s->dnpc` (dynamic next pc) 被赋值为 `s->snpc` (static next pc), 在执行完`isa_exec_once()`后立即`cpu.pc = s->dnpc`更新PC.
 
 ## 笔记
 

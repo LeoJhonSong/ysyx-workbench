@@ -1,143 +1,66 @@
-#include "common.h"
-#include "debug.h"
 #include "local-include/reg.h"
-
 #include <cpu/cpu.h>
-#include <cpu/decode.h>
 #include <cpu/ifetch.h>
-#include <stdint.h>
-#include <stdio.h>
+#include <cpu/decode.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
 
-///
-///@brief Types of instruction
-///
 enum {
-    TYPE_R,
-    TYPE_I,
-    TYPE_S,
-    TYPE_B,
-    TYPE_U,
-    TYPE_J
+  TYPE_I, TYPE_U, TYPE_S,
+  TYPE_N, // none
 };
 
-///
-///@brief Extract operands rd, rs1, rs2 from instruction s->isa.inst.val
-///
-///@param s Pointer to instance of \p Decode struct of current instruction
-///@param rd_pptr Pointer to pointer to rd register \p rd
-///@param rs1_pptr Pointer to pointer to rs1 register \p rs1
-///@param rs2_pptr Pointer to pointer to rs2 register \p rs2
-///@param imm_ptr Pointer to immediate value \p imm
-///@param type Type of the instruction
-///
-static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_t **rs2_pptr, word_t *imm_ptr, int type) {
-    uint32_t i = s->isa.inst.val;
-    int rd = BITS(i, 11, 7);
-    int rs1 = BITS(i, 19, 15);
-    int rs2 = BITS(i, 24, 20);
-    switch (type) {
-        case TYPE_R:
-            TODO();
-            break;
-        case TYPE_I:
-            *rd_pptr = &R(rd);
-            *rs1_pptr = &R(rs1);
-            *imm_ptr = SEXT(BITS(i, 31, 20), 12);
-            break;
-        case TYPE_S:
-            *rs1_pptr = &R(rs1);
-            *rs2_pptr = &R(rs2);
-            *imm_ptr = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);
-            break;
-        case TYPE_B:
-            TODO();
-            break;
-        case TYPE_U:
-            *rd_pptr = &R(rd);
-            *imm_ptr = SEXT(BITS(i, 31, 12), 20) << 12;
-            break;
-        case TYPE_J:
-            *rd_pptr = &R(rd);
-            *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 20 | SEXT(BITS(i, 30, 21), 10) << 1 | SEXT(BITS(i, 20, 20), 1) << 11 | SEXT(BITS(i, 19, 12), 8) << 12);
-            break;
-        default:
-            Assert(0, "Error instruction type\n");
-    }
+#define src1R(n) do { *src1 = R(n); } while (0)
+#define src2R(n) do { *src2 = R(n); } while (0)
+#define destR(n) do { *dest = n; } while (0)
+#define src1I(i) do { *src1 = i; } while (0)
+#define src2I(i) do { *src2 = i; } while (0)
+#define destI(i) do { *dest = i; } while (0)
+
+static word_t immI(uint32_t i) { return SEXT(BITS(i, 31, 20), 12); }
+static word_t immU(uint32_t i) { return SEXT(BITS(i, 31, 12), 20) << 12; }
+static word_t immS(uint32_t i) { return (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); }
+
+static void decode_operand(Decode *s, word_t *dest, word_t *src1, word_t *src2, int type) {
+  uint32_t i = s->isa.inst.val;
+  int rd  = BITS(i, 11, 7);
+  int rs1 = BITS(i, 19, 15);
+  int rs2 = BITS(i, 24, 20);
+  destR(rd);
+  switch (type) {
+    case TYPE_I: src1R(rs1);     src2I(immI(i)); break;
+    case TYPE_U: src1I(immU(i)); break;
+    case TYPE_S: destI(immS(i)); src1R(rs1); src2R(rs2); break;
+  }
 }
 
-///
-///@brief instruction of \p s (uint32_t)
-///
-///@param s Pointer to instance of \p Decode struct of current instruction
-///
-#define INSTPAT_INST(s) ((s)->isa.inst.val)
-
-#define rd *rd_ptr
-#define rs1 *rs1_ptr
-#define rs2 *rs2_ptr
-
-///
-///@brief Execute operation for current instruction
-///
-///@param s Pointer to instance of \p Decode struct of current instruction
-///@param type Type of the instruction
-///@param body Operations of the instruction
-///
-#define INSTPAT_MATCH(s, type, ... /* body */)                                     \
-    {                                                                              \
-        decode_operand(s, &rd_ptr, &rs1_ptr, &rs2_ptr, &imm, concat(TYPE_, type)); \
-        __VA_ARGS__;                                                               \
-    }
-
-///
-///@brief Actually decode \b and execute the instruction
-///
-///@param s Pointer to instance of \p Decode struct of current instruction
-///@return Always return 0, useless for now
-///
 static int decode_exec(Decode *s) {
-    word_t rd, rs1, rs2, imm;
+  word_t dest = 0, src1 = 0, src2 = 0;
+  s->dnpc = s->snpc;
 
-    s->dnpc = s->snpc; // For normal instructions, dynamic next pc should be same with staticc next pc
-
-    INSTPAT_START();
-
-    // Note: only 0/1/? are allowed in pattern string, 0/1 only matches 0/1, ? matches 0 or 1
-    // spaces, │ in pattern string are ignored
-
-    // RV32I/RV64I Base Integer Instructions
-    // R-type │funct7      │rs2  │rs1  │funct3│rd         │opcode │
-    // I-type │imm[11:0]         │rs1  │funct3│rd         │opcode │
-    INSTPAT(L"│????????????      │?????│000   │?????      │1100111│", I, rd = s->pc + 4; s->dnpc = rs1 + imm);   // jalr
-    INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, rd = Mr(rs1 + imm, 8));                 // ld
-    INSTPAT(L"│????????????      │?????│000   │?????      │0010011│", I, rd = rs1 + imm);                        // addi
-    INSTPAT(L"│000000000001      │00000│000   │00000      │1110011│", I, NEMUTRAP(s->pc, R(10)));                // ebreak, Note: R(10) is $a0
-    // S-type │imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
-    INSTPAT(L"│???????     │?????│?????│011   │?????      │0100011│", S, Mw(rs1 + imm, 8, rs2));                 // sd
-    // B-type │imm[12|10:5]│rs2  │rs1  │funct3│imm[4:1|11]│opcode │
-    // U-type │imm[31:12]                     │rd         │opcode │
-    INSTPAT(L"│????????????????????           │?????      │0010111│", U, rd = s->pc + imm);                      // auipc
-    // J-type │imm[20|10:1|11|19:12]          │rd         │opcode │
-    INSTPAT(L"│????????????????????           │?????      │1101111│", J, rd = s->pc + 4; s->dnpc = s->pc + imm); // jal
-
-    // If an instruction does not match any pattern of above, it is invalid
-    INSTPAT(L"│????????????      │?????│???   │?????      │???????│", I, INV(s->pc));
-
-    INSTPAT_END();
-
-    R(0) = 0; // reset $zero to 0
-
-    return 0;
+#define INSTPAT_INST(s) ((s)->isa.inst.val)
+#define INSTPAT_MATCH(s, name, type, ... /* body */ ) { \
+  decode_operand(s, &dest, &src1, &src2, concat(TYPE_, type)); \
+  __VA_ARGS__ ; \
 }
-#undef rd
-#undef rs1
-#undef rs2
+
+  INSTPAT_START();
+  INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, R(dest) = src1 + s->pc);
+  INSTPAT("??????? ????? ????? 011 ????? 00000 11", ld     , I, R(dest) = Mr(src1 + src2, 8));
+  INSTPAT("??????? ????? ????? 011 ????? 01000 11", sd     , S, Mw(src1 + dest, 8, src2));
+
+  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+  INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
+  INSTPAT_END();
+
+  R(0) = 0; // reset $zero to 0
+
+  return 0;
+}
 
 int isa_exec_once(Decode *s) {
-    s->isa.inst.val = inst_fetch(&s->snpc, 4);
-    return decode_exec(s);
+  s->isa.inst.val = inst_fetch(&s->snpc, 4);
+  return decode_exec(s);
 }
