@@ -18,7 +18,8 @@ Makefile.%: tests/%.c latest
 	@printf "$(COLOR_CYAN) $*$(COLOR_NONE)\n"
 	@/bin/echo -e "NAME = $*\nSRCS = $<\nLIBS += klib\ninclude $${AM_HOME}/Makefile" > $@
 	@make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) 2>&1 > /dev/null # redirect strerr of command to stdout and drop stdout of command
-	@if [[ $$(tail -n 1 build/nemu-log.txt' | awk '{print $$NF}') == "$[exit code$] 0" ]]; then \
+	@$(info $$(tail -n 1 build/nemu-log.txt' | awk '{print $$NF}') == "[exit code] 0")
+	@if [[ $$(tail -n 1 build/nemu-log.txt' | awk '{print $$NF}') == "[exit code] 0" ]]; then \
 		printf "$(COLOR_GREEN) $*$(COLOR_NONE)\n" >> $(RESULT); \
 	else \
 		printf "$(COLOR_RED) $*$(COLOR_NONE)\n" >> $(RESULT); \
