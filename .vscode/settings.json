@@ -15,5 +15,17 @@
             "path": "zsh",
         }
     },
-    "terminal.integrated.defaultProfile.linux": "zsh"
+    "cSpell.words": [
+        "addi",
+        "addiw",
+        "auipc",
+        "dnpc",
+        "ebreak",
+        "jalr",
+        "nemu",
+        "NEMUTRAP",
+        "sltiu",
+        "snpc",
+        "thispc"
+    ],
 }

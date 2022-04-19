@@ -10,8 +10,8 @@ RUN echo "root:root" | chpasswd && \
     echo "${USER_NAME} ALL=(ALL) ALL" >> /etc/sudoers
 
 # change to china mirrors and add archlinuxcn, then refresh source lists and install packages
-RUN sed -i '1s/^/Server = https:\/\/mirrors.tuna.tsinghua.edu.cn\/archlinux\/\$repo\/os\/\$arch\n/' /etc/pacman.d/mirrorlist && \
-    echo -e "[archlinuxcn]\nSigLevel = Never\nServer = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch" | tee -a /etc/pacman.conf && \
+RUN sed -i '1s/^/Server = https:\/\/mirrors.sjtug.sjtu.edu.cn\/manjaro\/stable\/\$repo\/\$arch\n/' /etc/pacman.d/mirrorlist && \
+    echo -e "[archlinuxcn]\nSigLevel = Never\nServer = https://mirrors.sjtug.sjtu.edu.cn/archlinux-cn/\$arch" | tee -a /etc/pacman.conf && \
     pacman -Syy && \
     pacman -S --noconfirm archlinuxcn-keyring \
         yay \
@@ -22,6 +22,7 @@ RUN sed -i '1s/^/Server = https:\/\/mirrors.tuna.tsinghua.edu.cn\/archlinux\/\$r
         clang \
         verilator \
         gtkwave \
+        riscv64-linux-gnu-gcc \
         vi \
         neovim \
         python-pynvim \

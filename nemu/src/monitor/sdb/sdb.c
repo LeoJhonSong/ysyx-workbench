@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int is_batch_mode = false;
+int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
@@ -130,7 +130,6 @@ static struct {
     {"help", "Display informations about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
-    /* TODO: Add more commands */
     {"s", "Single step N instructions", cmd_s},
     {"i", "Display register/watchpoint infomation", cmd_i},
     {"x", "Print N words in memory starting from EXPR", cmd_x},

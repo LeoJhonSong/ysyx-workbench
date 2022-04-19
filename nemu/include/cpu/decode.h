@@ -2,32 +2,34 @@
 #define __CPU_DECODE_H__
 
 #include <isa.h>
+#include <wchar.h>
 
+///
+///@brief All data needed to execute an instruction
+///
 typedef struct Decode {
-  vaddr_t pc;
-  vaddr_t snpc; // static next pc
-  vaddr_t dnpc; // dynamic next pc
-  ISADecodeInfo isa;
-  IFDEF(CONFIG_ITRACE, char logbuf[128]);
+    vaddr_t pc;
+    vaddr_t snpc;                           ///< static next pc
+    vaddr_t dnpc;                           ///< dynamic next pc
+    ISADecodeInfo isa;                      ///< ISA related info
+    IFDEF(CONFIG_ITRACE, char logbuf[128]); ///< string to record current instruction and corresponding disassemble
 } Decode;
 
 // --- pattern matching mechanism ---
-__attribute__((always_inline))
-static inline void pattern_decode(const char *str, int len,
-    uint32_t *key, uint32_t *mask, uint32_t *shift) {
-  uint32_t __key = 0, __mask = 0, __shift = 0;
-#define macro(i) \
-  if ((i) >= len) goto finish; \
-  else { \
-    char c = str[i]; \
-    if (c != ' ') { \
-      Assert(c == '0' || c == '1' || c == '?', \
-          "invalid character '%c' in pattern string", c); \
-      __key  = (__key  << 1) | (c == '1' ? 1 : 0); \
-      __mask = (__mask << 1) | (c == '?' ? 0 : 1); \
-      __shift = (c == '?' ? __shift + 1 : 0); \
-    } \
-  }
+__attribute__((always_inline)) static inline void pattern_decode(const wchar_t *str, int len, uint32_t *key, uint32_t *mask, uint32_t *shift) {
+    uint32_t __key = 0, __mask = 0, __shift = 0;
+#define macro(i)                                                                                     \
+    if ((i) >= len)                                                                                  \
+        goto finish;                                                                                 \
+    else {                                                                                           \
+        wchar_t c = str[i];                                                                             \
+        if (c != ' ' && c != L'│') {                                                                              \
+            Assert(c == '0' || c == '1' || c == '?', "invalid character '%x' in pattern string", c); \
+            __key = (__key << 1) | (c == '1' ? 1 : 0);                                               \
+            __mask = (__mask << 1) | (c == '?' ? 0 : 1);                                             \
+            __shift = (c == '?' ? __shift + 1 : 0);                                                  \
+        }                                                                                            \
+    }
 
 #define macro2(i)  macro(i);   macro((i) + 1)
 #define macro4(i)  macro2(i);  macro2((i) + 2)
@@ -39,49 +41,60 @@ static inline void pattern_decode(const char *str, int len,
   panic("pattern too long");
 #undef macro
 finish:
-  *key = __key >> __shift;
-  *mask = __mask >> __shift;
-  *shift = __shift;
+    *key = __key >> __shift;
+    *mask = __mask >> __shift;
+    *shift = __shift;
 }
 
-__attribute__((always_inline))
-static inline void pattern_decode_hex(const char *str, int len,
-    uint32_t *key, uint32_t *mask, uint32_t *shift) {
-  uint32_t __key = 0, __mask = 0, __shift = 0;
-#define macro(i) \
-  if ((i) >= len) goto finish; \
-  else { \
-    char c = str[i]; \
-    if (c != ' ') { \
-      Assert((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || c == '?', \
-          "invalid character '%c' in pattern string", c); \
-      __key  = (__key  << 4) | (c == '?' ? 0 : (c >= '0' && c <= '9') ? c - '0' : c - 'a' + 10); \
-      __mask = (__mask << 4) | (c == '?' ? 0 : 0xf); \
-      __shift = (c == '?' ? __shift + 4 : 0); \
-    } \
-  }
+__attribute__((always_inline)) static inline void pattern_decode_hex(const char *str, int len, uint32_t *key, uint32_t *mask, uint32_t *shift) {
+    uint32_t __key = 0, __mask = 0, __shift = 0;
+#define macro(i)                                                                                                                 \
+    if ((i) >= len)                                                                                                              \
+        goto finish;                                                                                                             \
+    else {                                                                                                                       \
+        char c = str[i];                                                                                                         \
+        if (c != ' ') {                                                                                                          \
+            Assert((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || c == '?', "invalid character '%c' in pattern string", c); \
+            __key = (__key << 4) | (c == '?' ? 0 : (c >= '0' && c <= '9') ? c - '0'                                              \
+                                                                          : c - 'a' + 10);                                       \
+            __mask = (__mask << 4) | (c == '?' ? 0 : 0xf);                                                                       \
+            __shift = (c == '?' ? __shift + 4 : 0);                                                                              \
+        }                                                                                                                        \
+    }
 
-  macro16(0);
-  panic("pattern too long");
+    macro16(0);
+    panic("pattern too long");
 #undef macro
 finish:
-  *key = __key >> __shift;
-  *mask = __mask >> __shift;
-  *shift = __shift;
+    *key = __key >> __shift;
+    *mask = __mask >> __shift;
+    *shift = __shift;
 }
 
+///
+///@brief Pattern matching wrappers for decode, execute operation defined in \p body once matched
+///
+///@param pattern The pattern string
+///@param type Type of the instruction
+///@param body Operations of the instruction
+///@note usage of do while, \see https://stackoverflow.com/a/257425/10088906
+///
+#define INSTPAT(pattern, ...)                                          \
+    do {                                                               \
+        uint32_t key, mask, shift;                                     \
+        pattern_decode(pattern, wcslen(pattern), &key, &mask, &shift); \
+        if (((INSTPAT_INST(s) >> shift) & mask) == key) {              \
+            INSTPAT_MATCH(s, ##__VA_ARGS__);                           \
+            goto *(__instpat_end);                                     \
+        }                                                              \
+    } while (0)
 
-// --- pattern matching wrappers for decode ---
-#define INSTPAT(pattern, ...) do { \
-  uint32_t key, mask, shift; \
-  pattern_decode(pattern, STRLEN(pattern), &key, &mask, &shift); \
-  if (((INSTPAT_INST(s) >> shift) & mask) == key) { \
-    INSTPAT_MATCH(s, ##__VA_ARGS__); \
-    goto *(__instpat_end); \
-  } \
-} while (0)
+#define INSTPAT_START(name) \
+    {                       \
+        const void **__instpat_end = &&concat(__instpat_end_, name);
 
-#define INSTPAT_START(name) { const void ** __instpat_end = &&concat(__instpat_end_, name);
-#define INSTPAT_END(name)   concat(__instpat_end_, name): ; }
+#define INSTPAT_END(name)           \
+    concat(__instpat_end_, name) :; \
+    }
 
 #endif
