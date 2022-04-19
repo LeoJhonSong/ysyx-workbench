@@ -28,7 +28,7 @@ static void out_of_bound(paddr_t addr) {
 
 void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
-  pmem = calloc(1, CONFIG_MSIZE);
+  pmem = malloc(CONFIG_MSIZE);
   assert(pmem);
 #endif
 #ifdef CONFIG_MEM_RANDOM
