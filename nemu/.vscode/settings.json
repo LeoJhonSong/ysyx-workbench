@@ -25,10 +25,15 @@
         }
     },
     "cSpell.words": [
+        "addi",
+        "addiw",
+        "addw",
+        "andi",
         "auipc",
         "dnpc",
         "ebreak",
         "ITRACE",
+        "jalr",
         "MBASE",
         "menuconfig",
         "MSIZE",
@@ -37,9 +42,16 @@
         "paddr",
         "PCRE",
         "pmem",
+        "rsai",
+        "sllw",
+        "sltiu",
+        "sltu",
         "snpc",
+        "srlw",
         "SUBCMD",
+        "subw",
         "unprogrammable",
-        "watchpoint"
+        "watchpoint",
+        "xori"
     ],
 }
