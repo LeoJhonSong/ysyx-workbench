@@ -92,8 +92,7 @@ static int cmd_x(char *args) {
                 word_t value = vaddr_read(expression + i * 4 + j, 1);
                 printf(" %s%02lx%s", value == 0 ? ANSI_DIM : ANSI_FG_NORMAL_GREEN, value, ANSI_NONE);
             }
-            printf(ANSI_FG_WHITE "%016lx" ANSI_NONE, expression + i * 4);
-            printf("\n");
+            printf(ANSI_FG_WHITE " %16lx\n" ANSI_NONE, expression + i * 4);
         }
     }
     return 0;
