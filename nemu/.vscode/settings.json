@@ -9,49 +9,4 @@
             ]
         }
     ],
-    "terminal.integrated.profiles.linux": {
-        "docker": {
-            "path": "docker",
-            "args": [
-                "exec",
-                "-it",
-                "--workdir=/home/student/ysyx-workbench",
-                "ysyx-workbench-container",
-                "zsh"
-            ]
-        },
-        "zsh": {
-            "path": "zsh",
-        }
-    },
-    "cSpell.words": [
-        "addi",
-        "addiw",
-        "addw",
-        "andi",
-        "auipc",
-        "dnpc",
-        "ebreak",
-        "ITRACE",
-        "jalr",
-        "MBASE",
-        "menuconfig",
-        "MSIZE",
-        "NEMU",
-        "NEMUTRAP",
-        "paddr",
-        "PCRE",
-        "pmem",
-        "rsai",
-        "sllw",
-        "sltiu",
-        "sltu",
-        "snpc",
-        "srlw",
-        "SUBCMD",
-        "subw",
-        "unprogrammable",
-        "watchpoint",
-        "xori"
-    ],
 }

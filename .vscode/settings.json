@@ -18,14 +18,25 @@
     "cSpell.words": [
         "addi",
         "addiw",
+        "addw",
+        "andi",
         "auipc",
         "dnpc",
         "ebreak",
         "jalr",
         "nemu",
         "NEMUTRAP",
+        "rsai",
+        "sllw",
         "sltiu",
+        "sltu",
         "snpc",
-        "thispc"
+        "srlw",
+        "SUBCMD",
+        "subw",
+        "thispc",
+        "unprogrammable",
+        "watchpoint",
+        "xori"
     ],
 }
