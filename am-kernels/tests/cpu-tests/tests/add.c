@@ -11,7 +11,7 @@ int add(int a, int b) {
 int test_data[] = {0, 1, 2};
 int ans[] = {0, 1, 2, 2, 3, 4};
 
-#define NR_DATA 3
+#define NR_DATA LENGTH(test_data)
 
 int main() {
 	int i, j, ans_idx = 0;
