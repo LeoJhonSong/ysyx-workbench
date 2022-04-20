@@ -10,10 +10,4 @@ void check(bool cond) {
   if (!cond) halt(1);
 }
 
-__attribute__((noinline))
-int add(int a, int b) {
-	int c = a + b;
-	return c;
-}
-
 #endif
