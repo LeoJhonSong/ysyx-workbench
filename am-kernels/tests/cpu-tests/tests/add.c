@@ -18,7 +18,7 @@ int main() {
 	for(i = 0; i < NR_DATA; i ++) {
 		for(j = i; j < NR_DATA; j ++) {
 			ans_idx++;
-			check(add(test_data[i], test_data[j]) == ans[ans_idx]);
+			check(add(test_data[i], test_data[j]) == ans[i + ans_idx - 1]);
 		}
 		check(j == NR_DATA);
 	}
