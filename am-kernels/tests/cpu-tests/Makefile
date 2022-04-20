@@ -31,8 +31,8 @@ Makefile.%: tests/%.c latest
 
 run test: all
 	@if [[ "$(MAKECMDGOALS)" == "test" ]]; then \
-		echo ────────────────────────────────────Summary───────────────────────────────────── \
-		cat $(RESULT) \
+		echo ────────────────────────────────────Summary─────────────────────────────────────; \
+		cat $(RESULT); \
 	fi
 	@rm $(RESULT)
 
