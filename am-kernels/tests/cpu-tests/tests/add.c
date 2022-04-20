@@ -19,7 +19,8 @@ int main() {
 			check(test_data[i]+ test_data[j] == ans[ans_idx]);
 			ans_idx = ans_idx + 1;
 		}
-		// check(j == NR_DATA);
+		j = 8;
+		check(j == NR_DATA);
 	}
 
 	return 0;
