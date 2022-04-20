@@ -14,6 +14,7 @@ int ans[] = {0, 1, 2, 2, 3, 4};
 #define NR_DATA LENGTH(test_data)
 
 int main() {
+	check(NR_DATA == 3);
 	int i, j, ans_idx = 0;
 	for(i = 0; i < NR_DATA; i ++) {
 		for(j = i; j < NR_DATA; j ++) {
