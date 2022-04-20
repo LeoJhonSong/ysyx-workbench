@@ -27,6 +27,7 @@
         "nemu",
         "NEMUTRAP",
         "rsai",
+        "slli",
         "sllw",
         "sltiu",
         "sltu",
