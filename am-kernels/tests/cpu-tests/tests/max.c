@@ -1,9 +1,10 @@
 #include "trap.h"
 
+__attribute__((noinline))
 int max(int x, int y) {
 	int z;
-	if(x > y) { z = x; }
-	else { z = y; }
+	if(x > y) { check(x>y); z = x; }
+	else { check(x<=y); z = y; }
 	return z;
 }
 
