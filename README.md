@@ -21,16 +21,18 @@ compiledb make build -j16 | ccze -A
 
 ```sh
 # cpu-tests
-
 cd am-kernels/tests/cpu-tests
-# 编译cpu-test/tests下的dummy.c程序并用riscv64-nemu运行
+
+# 编译cpu-test/tests下的dummy.c测试并用riscv64-nemu交互模式运行
 make ARCH=riscv64-nemu ALL=dummy run
+# 依次编译cpu-test/tests下所有测试并用riscv64-nemu批处理模式运行 (也可以加ALL参数运行指定测试)
+make ARCH=riscv64-nemu test
 # 查看反汇编结果
 cat build/dummy-riscv64-nemu.txt
-# 查看.elf文件信息
-riscv64-linux-gnu-readelf build/dummy-riscv64-nemu.elf <option(s)>
-# 查看.o文件信息
-riscv64-linux-gnu-objdump build/riscv64-nemu/tests/dummy.o  <option(s)>
+# 用readelf查看.elf/.o文件所有信息
+riscv64-linux-gnu-readelf build/dummy-riscv64-nemu.elf -a
+# 用objdump查看.o/.elf文件所有反汇编内容
+riscv64-linux-gnu-objdump build/riscv64-nemu/tests/dummy.o -D
 ```
 
 ## 使用

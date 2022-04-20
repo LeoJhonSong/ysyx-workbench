@@ -17,15 +17,22 @@ $(ALL): %: Makefile.%
 Makefile.%: tests/%.c latest
 	@printf "$(COLOR_CYAN) $*$(COLOR_NONE)\n"
 	@/bin/echo -e "NAME = $*\nSRCS = $<\nLIBS += klib\ninclude $${AM_HOME}/Makefile" > $@
-	@make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) 2>&1 > /dev/null # redirect strerr of command to stdout and drop stdout of command
-	@if [[ "$$(tail -n 1 build/nemu-log.txt)" == "[exit code] 0" ]]; then \
-		printf "$(COLOR_GREEN) $*$(COLOR_NONE)\n" >> $(RESULT); \
+	@if [[ "$(MAKECMDGOALS)" == "test" ]]; then \
+		NEMUFLAGS=--batch make -s -f $@ ARCH=$(ARCH) run 2>&1 > /dev/null; # use batch mode nemu, redirect strerr of command to stdout and drop stdout of command \
+		if [[ "$$(tail -n 1 build/nemu-log.txt)" == "[exit code] 0" ]]; then \
+			printf "$(COLOR_GREEN) $*$(COLOR_NONE)\n" >> $(RESULT); \
+		else \
+			printf "$(COLOR_RED) $*$(COLOR_NONE)\n" >> $(RESULT); \
+		fi \
 	else \
-		printf "$(COLOR_RED) $*$(COLOR_NONE)\n" >> $(RESULT); \
+		make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS); \
 	fi
 	-@rm -f Makefile.$*
 
 run: all
+	@rm $(RESULT)
+
+test: all
 	@echo ────────────────────────────────────Summary─────────────────────────────────────
 	@cat $(RESULT)
 	@rm $(RESULT)

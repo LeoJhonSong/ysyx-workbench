@@ -24,6 +24,8 @@
         "jalr",
         "nemu",
         "NEMUTRAP",
+        "objdump",
+        "readelf",
         "sltiu",
         "snpc",
         "thispc"
