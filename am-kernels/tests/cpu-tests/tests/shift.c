@@ -24,9 +24,9 @@ int main() {
 		check((test[i] >> 7) == srl_ans[i]);
 	}
 
-	// for(i = 0; i < LENGTH(test); i ++) {
-	// 	check((unsigned)((int)test[i] >> (i + 4)) == srav_ans[i]);
-	// }
+	for(i = 0; i < LENGTH(test); i ++) {
+		check((unsigned)((int)test[i] >> (i + 4)) == srav_ans[i]);
+	}
 
 	// for(i = 0; i < LENGTH(test); i ++) {
 	// 	check((test[i] >> (i + 4)) == srlv_ans[i]);
