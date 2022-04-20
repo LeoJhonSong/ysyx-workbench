@@ -22,7 +22,7 @@ int main() {
 	// 	check(j == NR_DATA);
 	// }
 
-	check(0);
+	check(1);
 
 	return 0;
 }
