@@ -33,20 +33,20 @@ int main() {
 	quick_sort(a, 0, N - 1);
 	check(0);
 
-	int i;
-	for(i = 0; i < N; i ++) {
-		check(a[i] == i);
-	}
+	// int i;
+	// for(i = 0; i < N; i ++) {
+	// 	check(a[i] == i);
+	// }
 
-	check(i == N);
+	// check(i == N);
 
-	quick_sort(a, 0, N - 1);
+	// quick_sort(a, 0, N - 1);
 
-	for(i = 0; i < N; i ++) {
-		check(a[i] == i);
-	}
+	// for(i = 0; i < N; i ++) {
+	// 	check(a[i] == i);
+	// }
 
-	check(i == N);
+	// check(i == N);
 
-	return 0;
+	// return 0;
 }
