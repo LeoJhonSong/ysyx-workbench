@@ -10,9 +10,11 @@ int partition(int *a, int p, int q) {
 	int i = p, j = q;
 	while(i < j) {
 		while(i < j && a[j] > pivot) j --;
+		check(i >= 0 && i < 20 && j >= 0 && j < 20);
 		a[i] = a[j];
 
 		while(i < j && a[i] <= pivot) i ++;
+		check(i >= 0 && i < 20 && j >= 0 && j < 20);
 		a[j] = a[i];
 	}
 
