@@ -7,7 +7,7 @@
 
 __attribute__((noinline))
 void check(bool cond) {
-  if (!cond) halt(1);
+  if (!cond) halt(0);
 }
 
 #endif
