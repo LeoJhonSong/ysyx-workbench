@@ -19,7 +19,7 @@ int main() {
 			// check(add(test_data[i], test_data[j]) == ans[ans_idx ++]);
 			ans_idx++;
 		}
-		// check(j == NR_DATA);
+		check(j == NR_DATA);
 	}
 
 	// check(i == NR_DATA);
