@@ -31,12 +31,11 @@ void quick_sort(int *a, int p, int q) {
 
 int main() {
 	quick_sort(a, 0, N - 1);
-	check(1);
 
-	// int i;
-	// for(i = 0; i < N; i ++) {
-	// 	check(a[i] == i);
-	// }
+	int i;
+	for(i = 0; i < N; i ++) {
+		check(a[i] == i);
+	}
 
 	// check(i == N);
 
