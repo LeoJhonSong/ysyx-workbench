@@ -4,18 +4,14 @@
 
 int a[N] = {2, 12, 14, 6, 13, 15, 16, 10, 0, 18, 11, 19, 9, 1, 7, 5, 4, 3, 8, 17};
 
-__attribute__((noinline))
 int partition(int *a, int p, int q) {
 	int pivot = a[p];
 	int i = p, j = q;
 	while(i < j) {
-		check(i < j);
 		while(i < j && a[j] > pivot) j --;
-		check(i >= 0 && i < 20 && j >= 0 && j < 20);
 		a[i] = a[j];
 
 		while(i < j && a[i] <= pivot) i ++;
-		check(i >= 0 && i < 20 && j >= 0 && j < 20);
 		a[j] = a[i];
 	}
 
@@ -23,7 +19,6 @@ int partition(int *a, int p, int q) {
 	return i;
 }
 
-__attribute__((noinline))
 void quick_sort(int *a, int p, int q) {
 	if(p >= q) return;
 
@@ -44,11 +39,11 @@ int main() {
 
 	quick_sort(a, 0, N - 1);
 
-	// for(i = 0; i < N; i ++) {
-	// 	check(a[i] == i);
-	// }
+	for(i = 0; i < N; i ++) {
+		check(a[i] == i);
+	}
 
-	// check(i == N);
+	check(i == N);
 
 	return 0;
 }
