@@ -37,9 +37,9 @@ int main() {
 		check(a[i] == i);
 	}
 
-	// check(i == N);
+	check(i == N);
 
-	// quick_sort(a, 0, N - 1);
+	quick_sort(a, 0, N - 1);
 
 	// for(i = 0; i < N; i ++) {
 	// 	check(a[i] == i);
