@@ -15,9 +15,11 @@ int ans[] = {0, 1, 2, 2, 3, 4};
 
 int main() {
 	int i, j, ans_idx = 0;
+	int t = 0;
 	for(i = 0; i < NR_DATA; i ++) {
 		for(j = i; j < NR_DATA; j ++) {
-			check(add(test_data[i], test_data[j]) == ans[ans_idx]);
+			t = add(test_data[i], test_data[j]);
+			check(t == ans[ans_idx]);
 			ans_idx++;
 		}
 	}
