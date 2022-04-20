@@ -10,4 +10,9 @@ void check(bool cond) {
   if (!cond) halt(1);
 }
 
+int add(int a, int b) {
+	int c = a + b;
+	return c;
+}
+
 #endif
