@@ -21,6 +21,7 @@
         "addw",
         "andi",
         "auipc",
+        "bltu",
         "dnpc",
         "ebreak",
         "jalr",
