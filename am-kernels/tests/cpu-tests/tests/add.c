@@ -19,12 +19,12 @@ int main() {
 	int j = 0;
 	int ans_idx = 0;
 	check(add(test_data[i], test_data[j]) == ans[ans_idx]);
-	// for(i = 0; i < NR_DATA; i ++) {
-	// 	for(j = i; j < NR_DATA; j ++) {
-	// 		check(add(test_data[i], test_data[j]) == ans[ans_idx]);
-	// 		ans_idx++;
-	// 	}
-	// }
+	for(i = 0; i < NR_DATA; i ++) {
+		for(j = i; j < NR_DATA; j ++) {
+			check(add(test_data[i], test_data[j]) == ans[ans_idx]);
+			ans_idx++;
+		}
+	}
 
 	return 0;
 }
