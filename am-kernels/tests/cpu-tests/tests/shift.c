@@ -20,17 +20,17 @@ unsigned srav_ans[] = {
 int main() {
 	unsigned i;
 
-	for(i = 0; i < LENGTH(test); i ++) {
-		check((test[i] >> 7) == srl_ans[i]);
-	}
-
 	// for(i = 0; i < LENGTH(test); i ++) {
-	// 	check((unsigned)((int)test[i] >> (i + 4)) == srav_ans[i]);
+	// 	check((test[i] >> 7) == srl_ans[i]);
 	// }
 
 	for(i = 0; i < LENGTH(test); i ++) {
-		check((test[i] >> (i + 4)) == srlv_ans[i]);
+		check((unsigned)((int)test[i] >> (i + 4)) == srav_ans[i]);
 	}
+
+	// for(i = 0; i < LENGTH(test); i ++) {
+	// 	check((test[i] >> (i + 4)) == srlv_ans[i]);
+	// }
 
 	return 0;
 }
