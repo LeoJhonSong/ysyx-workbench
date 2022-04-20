@@ -11,7 +11,7 @@ int add(int a, int b) {
 int test_data[] = {0, 1, 2, 3};
 int ans[] = {0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6};
 
-#define NR_DATA 4
+#define NR_DATA LENGTH(test_data)
 
 int main() {
 	int i = 0;
@@ -19,7 +19,7 @@ int main() {
 	int ans_idx = 0;
 	for(i = 0; i < NR_DATA; i = i + 1) {
 		for(j = 0; j < NR_DATA; j = j + 1) {
-			check(add(test_data[i], test_data[j]) == ans[ans_idx]);
+			check(test_data[i]+ test_data[j] == ans[ans_idx]);
 			ans_idx = ans_idx + 1;
 		}
 	}
