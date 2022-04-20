@@ -115,7 +115,7 @@ static int decode_exec(Decode *s) {
 
     // RV32I Base Integer Instructions
     // R-type │funct7      │rs2  │rs1  │funct3│rd         │opcode │
-    // INSTPAT(L"│0000000     │?????│?????│000   │?????      │0110011│", R, rd = rs1 + rs2);                         // add
+    INSTPAT(L"│0000000     │?????│?????│000   │?????      │0110011│", R, rd = rs1 + rs2);                         // add
     INSTPAT(L"│0100000     │?????│?????│000   │?????      │0110011│", R, rd = rs1 - rs2);                         // sub
     // INSTPAT(L"│0000000     │?????│?????│001   │?????      │0110011│", R, rd = rs1 << rs2);                        // sll
     // INSTPAT(L"│0000000     │?????│?????│011   │?????      │0110011│", R, rd = (rs1 < rs2) ? 1 : 0);               // sltu
