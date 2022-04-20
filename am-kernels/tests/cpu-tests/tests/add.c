@@ -15,13 +15,13 @@ int ans[] = {0, 1, 2, 2, 3, 4};
 
 int main() {
 	check(NR_DATA == 3);
-	// int i, j, ans_idx = 0;
-	// for(i = 0; i < NR_DATA; i ++) {
-	// 	for(j = i; j < NR_DATA; j ++) {
-	// 		check(add(test_data[i], test_data[j]) == ans[ans_idx]);
-	// 		ans_idx++;
-	// 	}
-	// }
+	int i, j, ans_idx = 0;
+	for(i = 0; i < NR_DATA; i ++) {
+		for(j = i; j < NR_DATA; j ++) {
+			check(add(test_data[i], test_data[j]) == ans[ans_idx]);
+			ans_idx++;
+		}
+	}
 
 	return 0;
 }
