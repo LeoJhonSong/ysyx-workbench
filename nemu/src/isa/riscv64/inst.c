@@ -53,12 +53,12 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
         case TYPE_S:
             *rs1_pptr = &R(rs1);
             *rs2_pptr = &R(rs2);
-            *imm_ptr = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);
+            *imm_ptr = SEXT(BITS(i, 31, 25), 7) << 5 | BITS(i, 11, 7);
             break;
         case TYPE_B:
             *rs1_pptr = &R(rs1);
             *rs2_pptr = &R(rs2);
-            *imm_ptr = ((SEXT(BITS(i, 31, 31), 1) << 12) | (SEXT(BITS(i, 30, 25), 6) << 5) | (SEXT(BITS(i, 11, 8), 4) << 1) | (SEXT(BITS(i, 7, 7), 1) << 11));
+            *imm_ptr = SEXT(BITS(i, 31, 31), 1) << 12 | BITS(i, 30, 25) << 5 | BITS(i, 11, 8) << 1 | BITS(i, 7, 7) << 11;
             break;
         case TYPE_U:
             *rd_pptr = &R(rd);
@@ -66,7 +66,7 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
             break;
         case TYPE_J:
             *rd_pptr = &R(rd);
-            *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 20 | SEXT(BITS(i, 30, 21), 10) << 1 | SEXT(BITS(i, 20, 20), 1) << 11 | SEXT(BITS(i, 19, 12), 8) << 12);
+            *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 20 | BITS(i, 30, 21) << 1 | BITS(i, 20, 20) << 11 | BITS(i, 19, 12) << 12);
             break;
         default:
             Assert(0, "Error instruction type\n");
