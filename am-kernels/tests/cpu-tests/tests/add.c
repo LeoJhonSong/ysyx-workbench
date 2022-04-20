@@ -17,13 +17,10 @@ int main() {
 	int i, j, ans_idx = 0;
 	for(i = 0; i < NR_DATA; i ++) {
 		for(j = i; j < NR_DATA; j ++) {
+			check(add(test_data[i], test_data[j]) == ans[i + ans_idx]);
 			ans_idx++;
-			check(add(test_data[i], test_data[j]) == ans[i + ans_idx - 1]);
 		}
-		check(j == NR_DATA);
 	}
-
-	check(i == NR_DATA);
 
 	return 0;
 }
