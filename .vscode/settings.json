@@ -25,6 +25,7 @@
         "dnpc",
         "ebreak",
         "jalr",
+        "mulw",
         "nemu",
         "NEMUTRAP",
         "slli",
