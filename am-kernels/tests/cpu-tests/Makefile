@@ -19,7 +19,7 @@ Makefile.%: tests/%.c latest
 	@/bin/echo -e "NAME = $*\nSRCS = $<\nLIBS += klib\ninclude $${AM_HOME}/Makefile" > $@
 	@if [[ "$(MAKECMDGOALS)" == "run" ]]; then \
 		make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS); \
-	elfi [[ "$(MAKECMDGOALS)" == "test" ]]; \
+	elif [[ "$(MAKECMDGOALS)" == "test" ]]; then \
 		make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) 2>&1 > /dev/null; # redirect strerr of command to stdout and drop stdout of command \
 		if [[ "$$(tail -n 1 build/nemu-log.txt)" == "[exit code] 0" ]]; then \
 			printf "$(COLOR_GREEN) $*$(COLOR_NONE)\n" >> $(RESULT); \
