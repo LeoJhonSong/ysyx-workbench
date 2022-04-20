@@ -73,6 +73,7 @@
 
 ///
 ///@brief Sign extend number \p x from \p len bits to 64 bits
+///@param len origin length by bits of x
 ///
 #define SEXT(x, len) ({ struct { int64_t n : len; } __x = { .n = x }; (int64_t)__x.n; })
 
