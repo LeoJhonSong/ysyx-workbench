@@ -31,6 +31,7 @@ void quick_sort(int *a, int p, int q) {
 
 int main() {
 	quick_sort(a, 0, N - 1);
+	check(0);
 
 	int i;
 	for(i = 0; i < N; i ++) {

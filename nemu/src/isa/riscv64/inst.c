@@ -66,7 +66,7 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
             break;
         case TYPE_J:
             *rd_pptr = &R(rd);
-            *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 20 | BITS(i, 30, 21) << 1 | BITS(i, 20, 20) << 11 | BITS(i, 19, 12) << 12);
+            *imm_ptr = SEXT(BITS(i, 31, 31), 1) << 20 | BITS(i, 30, 21) << 1 | BITS(i, 20, 20) << 11 | BITS(i, 19, 12) << 12;
             break;
         default:
             Assert(0, "Error instruction type\n");
