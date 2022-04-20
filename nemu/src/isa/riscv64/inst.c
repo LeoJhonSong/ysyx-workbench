@@ -62,7 +62,7 @@ static void decode_operand(Decode *s, int64_t **rd_pptr, int64_t **rs1_pptr, int
             break;
         case TYPE_U:
             *rd_pptr = (int64_t *)&R(rd);
-            *imm_ptr = SEXT(BITS(i, 31, 12) << 12, 20);
+            *imm_ptr = SEXT(BITS(i, 31, 12), 20) << 12;
             break;
         case TYPE_J:
             *rd_pptr = (int64_t *)&R(rd);
