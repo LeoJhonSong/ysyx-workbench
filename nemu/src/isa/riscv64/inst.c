@@ -58,7 +58,7 @@ static void decode_operand(Decode *s, word_t **rd_pptr, word_t **rs1_pptr, word_
         case TYPE_B:
             *rs1_pptr = &R(rs1);
             *rs2_pptr = &R(rs2);
-            *imm_ptr = (SEXT(BITS(i, 31, 31), 1) << 12 | SEXT(BITS(i, 30, 25), 6) << 5 | SEXT(BITS(i, 11, 8), 4) << 1 | SEXT(BITS(i, 7, 7), 1) << 11);
+            *imm_ptr = ((SEXT(BITS(i, 31, 31), 1) << 12) | (SEXT(BITS(i, 30, 25), 6) << 5) | (SEXT(BITS(i, 11, 8), 4) << 1) | (SEXT(BITS(i, 7, 7), 1) << 11));
             break;
         case TYPE_U:
             *rd_pptr = &R(rd);
