@@ -124,9 +124,11 @@ static int cmd_w(char *args) {
 
 static int cmd_d(char *args) {
     /* extract the first argument */
-    char *arg = strtok(NULL, " ");
-    int idx = strtol(arg, NULL, 10); // The first arg, watchpoint index
-    free_wp_by_idx(idx);
+    if (args == NULL) {
+        free_wp_all();
+    } else {
+        free_wp_by_idx(strtol(args, NULL, 10));
+    }
     return 0;
 }
 

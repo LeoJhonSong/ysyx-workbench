@@ -31,11 +31,11 @@ sdb: **S**imple **D**e**B**uger
 | 继续运行     | `c`        | `c`              | 继续运行被暂停的程序                                         |
 | 退出         | `q`        | `q`              | 退出NEMU                                                     |
 | 单步执行     | `s [N]`    | `s 10`           | 让程序单步执行`N`条指令后暂停执行, 当`N`没有给出时, 缺省为`1` |
-| 打印程序状态 | `i SUBCMD` | `i r` `i w`      | 打印寄存器状态 打印监视点信息                                |
-| 扫描内存     | `x N EXPR` | `x 5 0x80000000` | 求出表达式`EXPR`的值, 将结果作为起始内存 地址, 以十六进制形式输出连续的`N`个4字节 |
+| 打印程序状态 | `i SUBCMD` | `i r`/`i w`     | 打印寄存器状态/打印监视点信息. 有别名`ir`和`iw`               |
+| 扫描内存     | `x N EXPR` | `x 5 0x80000000` | 求出表达式`EXPR`的值, 将结果作为起始内存 地址, 以十六进制形式输出连续的`N`个8字节 |
 | 表达式求值   | `p EXPR`   | `p *$t0 + 0x12`     | 求出表达式`EXPR`的值, 对于riscv64结果为`uint64_t`类型. `EXPR`支持的运算请见[下方BNF定义](#表达式求值接受的表达式的bnf定义) |
 | 设置监视点   | `w EXPR`   | `w *0x2000`      | 当表达式`EXPR`的值发生变化时, 暂停程序执行                   |
-| 删除监视点   | `d N`      | `d 2`            | 删除序号为`N`的监视点                                        |
+| 删除监视点   | `d [N]`      | `d 2`            | 删除序号为`N`的监视点, 当`N`没有给出时, 删除所有监视点     |
 
 ### 表达式求值接受的表达式的BNF定义
 ```sh
@@ -51,6 +51,7 @@ sdb: **S**imple **D**e**B**uger
   | <expr> "!=" <expr>
   | <expr> "&&" <expr>
   | "*" <expr>              # 指针解引用
+  | pc                      # 程序计数器PC
 ```
 
 ### 断点
@@ -64,6 +65,8 @@ sdb: **S**imple **D**e**B**uger
 ### 内存
 
 nemu用一个`uint8_t`类型 (也就是一个元素就是一字节) 的大数组`pmem` (在`nemu/src/memory/paddr.c`中定义) 来实现128MB (由`CONFIG_MSIZE`给出) 物理内存, 对于riscv32/64, 物理地址从**0x80000000**开始编址 (由`CONFIG_MBASE`给出), 因此合法物理地址范围为`CONFIG_MBASE` <= paddr < `CONFIG_MBASE + CONFIG_MSIZE`.
+
+💡 `make menuconfig`进入**Memory Configuration**可以将`pmem`的创建方式由全局数组改为`malloc()`, 来支持更大的内存. 不过由于默认开启了用随机数初始化内存 (有助于发现未定义行为), 用`malloc()`创建`pmem`会很耗资源 (主要被随机数消耗掉), 此时建议就用0初始化内存.
 
 客户程序`image` (在`nemu/src/isa/riscv32/init.c`中定义) 被加载至`RESET_VECTOR` (= `CONFIG_MBASE + CONFIG_PC_RESET_OFFSET`), 同时`cpu.pc`被指向此地址. 因为大多数x86_64电脑 (比如我的笔记本) 都是[小端序](https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E5%BA%8F#%E5%B0%8F%E7%AB%AF%E5%BA%8F)的, 与riscv32/64的端序正相同, 因此以`RESET_VECTOR`开始的四条指令来举例的话:
 ```sh
@@ -125,6 +128,18 @@ static int keep_this(int) __attribute__((used));
 > This function attribute informs the compiler that a static function is to be retained in the object file, even if it is unreferenced. Functions marked with __attribute__((used)) are tagged in the object file to avoid removal by linker unused section removal.
 
 这样一来即便编译器选项设置成有未引用变量/函数就报错, 用了这个属性就能正常保留.
+
+#### noinline attribute
+
+```c
+__attribute__((noinline))
+void check(bool cond) {
+  if (!cond) halt(1);
+}
+```
+> This function attribute suppresses the inlining of a function at the call points of the function.
+
+用这个属性可以让函数不要被优化成inline, 在汇编里能有自己的段.
 
 ## Introduction
 
