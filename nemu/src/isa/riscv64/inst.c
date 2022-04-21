@@ -172,9 +172,9 @@ static int decode_exec(Decode *s) {
     // I-type │imm[11:0]         │rs1  │funct3│rd         │opcode │
     INSTPAT(L"│????????????      │?????│011   │?????      │0000011│", I, rd = Mr(rs1 + imm, 8));                                                    // ld
     INSTPAT(L"│????????????      │?????│000   │?????      │0011011│", I, rd = SEXT(BITS(rs1 + imm, 31, 0), 32));                                    // addiw
-    INSTPAT(L"│0000000?????      │?????│001   │?????      │0011011│", I, rd = SEXT(BITS(rs1 << BITS(imm, 5, 0), 31, 0), 32));                       // slliw // CHECK: shamt = imm[5:0]
-    INSTPAT(L"│0000000?????      │?????│101   │?????      │0011011│", I, rd = SEXT(BITS((uint64_t)rs1 >> BITS(imm, 5, 0), 31, 0), 32));             // srliw // CHECK: zero-extend, shamt = imm[5:0]
-    INSTPAT(L"│0100000?????      │?????│101   │?????      │0011011│", I, rd = SEXT(BITS((int32_t)BITS(rs1, 31, 0) >> BITS(imm, 5, 0), 31, 0), 32)); // sraiw // CHECK: msb-extend, shamt = imm[5:0]
+    INSTPAT(L"│0000000?????      │?????│001   │?????      │0011011│", I, rd = SEXT(BITS(rs1 << BITS(imm, 4, 0), 31, 0), 32));                       // slliw // CHECK: shamt = imm[4:0]
+    INSTPAT(L"│0000000?????      │?????│101   │?????      │0011011│", I, rd = SEXT(BITS((uint64_t)rs1 >> BITS(imm, 4, 0), 31, 0), 32));             // srliw // CHECK: zero-extend, shamt = imm[4:0]
+    INSTPAT(L"│0100000?????      │?????│101   │?????      │0011011│", I, rd = SEXT((int32_t)BITS(rs1, 31, 0) >> BITS(imm, 4, 0), 32)); // sraiw // CHECK: msb-extend, shamt = imm[4:0]
     // S-type │imm[11:5]   │rs2  │rs1  │funct3│imm[4:0]   │opcode │
     INSTPAT(L"│???????     │?????│?????│011   │?????      │0100011│", S, Mw(rs1 + imm, 8, rs2)); // sd
     // B-type │imm[12|10:5]│rs2  │rs1  │funct3│imm[4:1|11]│opcode │
