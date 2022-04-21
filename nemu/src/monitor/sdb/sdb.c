@@ -62,13 +62,13 @@ static int cmd_s(char *args) {
 
 static int cmd_i(char *args) {
     if (args == NULL) {
-        printf("Missing subcommand\n");
+        ERROR("Missing subcommand\n");
     } else if (strcmp(args, "r") == 0) {
         isa_reg_display();
     } else if (strcmp(args, "w") == 0) {
         print_wps();
     } else {
-        printf("Unknown subcommand '%s'\n", args);
+        ERROR("Unknown subcommand '%s'\n", args);
     }
     return 0;
 }
@@ -109,16 +109,24 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-    bool success;
-    word_t value = expr(args, &success);
-    if (success) {
-        printf("result: " ANSI_FMT("%lu | %16lx\n", ANSI_FG_NORMAL_GREEN), value, value);
+    if (args == NULL) {
+        ERROR("Missing expression\n");
+    } else {
+        bool success;
+        word_t value = expr(args, &success);
+        if (success) {
+            printf("result: " ANSI_FMT("%lu | %16lx\n", ANSI_FG_NORMAL_GREEN), value, value);
+        }
     }
     return 0;
 }
 
 static int cmd_w(char *args) {
-    new_wp(args);
+    if (args == NULL) {
+        ERROR("Missing expression\n");
+    } else {
+        new_wp(args);
+    }
     return 0;
 }
 
