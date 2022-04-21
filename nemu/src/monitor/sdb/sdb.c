@@ -73,6 +73,16 @@ static int cmd_i(char *args) {
     return 0;
 }
 
+static int cmd_ir(char *args) {
+    isa_reg_display();
+    return 0;
+}
+
+static int cmd_iw(char *args) {
+    print_wps();
+    return 0;
+}
+
 static int cmd_x(char *args) {
     /* extract the first argument */
     char *arg = strtok(NULL, " ");
@@ -132,6 +142,8 @@ static struct {
     {"q", "Exit NEMU", cmd_q},
     {"s", "Single step N instructions", cmd_s},
     {"i", "Display register/watchpoint infomation", cmd_i},
+    {"ir", "Alias of command i r", cmd_ir},
+    {"iw", "Alias of command i w", cmd_iw},
     {"x", "Print N words in memory starting from EXPR", cmd_x},
     {"p", "Evaluation value of given expression", cmd_p},
     {"w", "Set watchpoint of given expression", cmd_w},
