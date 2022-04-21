@@ -62,14 +62,24 @@ static int cmd_s(char *args) {
 
 static int cmd_i(char *args) {
     if (args == NULL) {
-        printf("Missing subcommand\n");
+        ERROR("Missing subcommand\n");
     } else if (strcmp(args, "r") == 0) {
         isa_reg_display();
     } else if (strcmp(args, "w") == 0) {
         print_wps();
     } else {
-        printf("Unknown subcommand '%s'\n", args);
+        ERROR("Unknown subcommand '%s'\n", args);
     }
+    return 0;
+}
+
+static int cmd_ir(char *args) {
+    isa_reg_display();
+    return 0;
+}
+
+static int cmd_iw(char *args) {
+    print_wps();
     return 0;
 }
 
@@ -99,24 +109,34 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-    bool success;
-    word_t value = expr(args, &success);
-    if (success) {
-        printf("result: " ANSI_FMT("%lu | %16lx\n", ANSI_FG_NORMAL_GREEN), value, value);
+    if (args == NULL) {
+        ERROR("Missing expression\n");
+    } else {
+        bool success;
+        word_t value = expr(args, &success);
+        if (success) {
+            printf("result: " ANSI_FMT("%lu | %16lx\n", ANSI_FG_NORMAL_GREEN), value, value);
+        }
     }
     return 0;
 }
 
 static int cmd_w(char *args) {
-    new_wp(args);
+    if (args == NULL) {
+        ERROR("Missing expression\n");
+    } else {
+        new_wp(args);
+    }
     return 0;
 }
 
 static int cmd_d(char *args) {
     /* extract the first argument */
-    char *arg = strtok(NULL, " ");
-    int idx = strtol(arg, NULL, 10); // The first arg, watchpoint index
-    free_wp_by_idx(idx);
+    if (args == NULL) {
+        free_wp_all();
+    } else {
+        free_wp_by_idx(strtol(args, NULL, 10));
+    }
     return 0;
 }
 
@@ -132,10 +152,12 @@ static struct {
     {"q", "Exit NEMU", cmd_q},
     {"s", "Single step N instructions", cmd_s},
     {"i", "Display register/watchpoint infomation", cmd_i},
+    {"ir", "Alias of command i r", cmd_ir},
+    {"iw", "Alias of command i w", cmd_iw},
     {"x", "Print N words in memory starting from EXPR", cmd_x},
     {"p", "Evaluation value of given expression", cmd_p},
     {"w", "Set watchpoint of given expression", cmd_w},
-    {"d", "Delete watchpoint by index", cmd_d},
+    {"d", "Delete watchpoint by index N", cmd_d},
 };
 
 #define NR_CMD ARRLEN(cmd_table)

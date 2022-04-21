@@ -21,6 +21,7 @@ enum {
   TK_AND,   // &&
   TK_DEREF, // * for dereference
   TK_REG,   // general purpose register name
+  TK_PC,    // cpu.pc
 };
 
 static struct rule {
@@ -40,6 +41,7 @@ static struct rule {
   {"\\*", '*'},                   // plus
   {"/", '/'},                     // divide
   {"\\$[[:alnum:]]+", TK_REG},    // general purpose register name
+  {"pc", TK_PC},                  // value of current program counter cpu.pc
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -84,6 +86,7 @@ char *getTypeValue(Token *t) {
     case TK_AND: snprintf(str_p, ARRLEN(str), "&&"); break;
     case TK_DEREF: snprintf(str_p, ARRLEN(str), "*"); break;
     case TK_REG: snprintf(str_p, ARRLEN(str), "$%s", t->str); break;
+    case TK_PC: snprintf(str_p, ARRLEN(str), "PC"); break;
     default: snprintf(str_p, ARRLEN(str), "%c", t->type); break;
   }
 
@@ -197,6 +200,7 @@ word_t eval(int p, int q, bool *success) {
       case TK_DEC: return strtoul(tokens[p].str, NULL, 10);
       case TK_HEX: return strtoul(tokens[p].str, NULL, 16);
       case TK_REG: return isa_reg_str2val(tokens[p].str, success);
+      case TK_PC: return cpu.pc;
       default:
         ERROR("Missing operand\n");
         *success = false;

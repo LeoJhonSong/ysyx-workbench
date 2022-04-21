@@ -75,6 +75,12 @@ void free_wp_by_idx(int idx) {
     wps_in_use--;
 }
 
+void free_wp_all() {
+    while (wps_in_use > 0) {
+        free_wp_by_idx(0);
+    }
+}
+
 ///
 ///@brief Traverse from the head and print info of each watchpoint
 ///

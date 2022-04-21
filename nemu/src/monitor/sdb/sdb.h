@@ -14,6 +14,7 @@ struct watchpoint {
 
 void new_wp(char *str);
 void free_wp_by_idx(int idx);
+void free_wp_all();
 void print_wps();
 bool wps_check();
 
