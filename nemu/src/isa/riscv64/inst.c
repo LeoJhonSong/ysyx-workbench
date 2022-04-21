@@ -164,8 +164,8 @@ static int decode_exec(Decode *s) {
 
     // RV64I Base Integer Instructions
     // R-type │funct7      │rs2  │rs1  │funct3│rd         │opcode │
-    INSTPAT(L"│0000000     │?????│?????│000   │?????      │0111011│", R, rd = SEXT(BITS(rs1 + rs2, 31, 0), 31));              // addw
-    INSTPAT(L"│0100000     │?????│?????│000   │?????      │0111011│", R, rd = SEXT(BITS(rs1 - rs2, 31, 0), 31));              // subw
+    INSTPAT(L"│0000000     │?????│?????│000   │?????      │0111011│", R, rd = SEXT(BITS(rs1 + rs2, 31, 0), 32));              // addw
+    INSTPAT(L"│0100000     │?????│?????│000   │?????      │0111011│", R, rd = SEXT(BITS(rs1 - rs2, 31, 0), 32));              // subw
     INSTPAT(L"│0000000     │?????│?????│001   │?????      │0111011│", R, rd = SEXT(BITS(rs1 << BITS(rs2, 4, 0), 31, 0), 32)); // sllw
     INSTPAT(L"│0000000     │?????│?????│101   │?????      │0111011│", R, rd = SEXT(BITS(rs1, 31, 0) >> BITS(rs2, 4, 0), 32)); // srlw
     INSTPAT(L"│0100000     │?????│?????│101   │?????      │0111011│", R, rd = SEXT((int32_t)BITS(rs1, 31, 0) >> BITS(rs2, 4, 0), 32)); // sraw
