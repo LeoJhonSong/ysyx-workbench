@@ -17,10 +17,10 @@ int main() {
 		for(j = 0; j < NR_DATA; j ++) {
 			check(add(test_data[i], test_data[j]) == ans[ans_idx ++]);
 		}
-		// check(j == NR_DATA);
+		check(j == NR_DATA);
 	}
 
-	// check(i == NR_DATA);
+	check(i == NR_DATA);
 
 	return 0;
 }
