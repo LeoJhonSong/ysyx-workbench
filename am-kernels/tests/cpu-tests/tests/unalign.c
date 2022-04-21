@@ -9,6 +9,7 @@ int main() {
 		*((volatile unsigned*)(buf + 3)) = 0xaabbccdd;
 
 		x = *((volatile unsigned*)(buf + 3));
+		check(1);
 		check(x == 0xaabbccdd);
 
 		// buf[0] = buf[1] = 0;
