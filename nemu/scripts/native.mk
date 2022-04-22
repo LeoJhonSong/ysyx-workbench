@@ -13,16 +13,14 @@ override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
 override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
-IMG ?=,bin
+IMG ?=
 NEMU_EXEC := $(BINARY) $(ARGS) $(IMG)
 
 run-env: $(BINARY) $(DIFF_REF_SO)
 
 run: run-env
 	$(call git_commit, "run NEMU")
-	cp $(BINARY) $(BINARY)-$(shell basename $(IMG) .bin)
-	-$(BINARY)-$(shell basename $(IMG) .bin) $(ARGS) $(IMG)
-	rm $(BINARY)-$(shell basename $(IMG) .bin)
+	-$(NEMU_EXEC)
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
