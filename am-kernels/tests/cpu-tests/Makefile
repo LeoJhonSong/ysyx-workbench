@@ -18,7 +18,8 @@ Makefile.%: tests/%.c latest
 	@printf "$(COLOR_CYAN) $*$(COLOR_NONE)\n"
 	@/bin/echo -e "NAME = $*\nSRCS = $<\nLIBS += klib\ninclude $${AM_HOME}/Makefile" > $@
 	@if [[ "$(MAKECMDGOALS)" == "test" ]]; then \
-		NEMUFLAGS=--batch make -s -f $@ ARCH=$(ARCH) run 2>&1 > /dev/null; # use batch mode nemu, redirect strerr of command to stdout and drop stdout of command \
+		NEMUFLAGS=--batch make -s -f $@ ARCH=$(ARCH) run; \
+		# NEMUFLAGS=--batch make -s -f $@ ARCH=$(ARCH) run 2>&1 > /dev/null; # use batch mode nemu, redirect strerr of command to stdout and drop stdout of command \
 		if [[ "$$(tail -n 1 build/$*-$(ARCH)-log.txt)" == "[exit code] 0" ]]; then \
 			printf "$(COLOR_GREEN) $*$(COLOR_NONE)\n" >> $(RESULT); \
 		else \
