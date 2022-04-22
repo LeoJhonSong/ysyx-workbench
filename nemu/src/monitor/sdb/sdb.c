@@ -157,7 +157,7 @@ static struct {
     {"x", "Print N words in memory starting from EXPR", cmd_x},
     {"p", "Evaluation value of given expression", cmd_p},
     {"w", "Set watchpoint of given expression", cmd_w},
-    {"d", "Delete watchpoint by index", cmd_d},
+    {"d", "Delete watchpoint by index N", cmd_d},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
