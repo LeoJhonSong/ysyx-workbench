@@ -47,7 +47,6 @@ endif
 
 ### Create the destination directory (`build/$ARCH`)
 WORK_DIR  = $(shell pwd)
-$(info $(_NAME))
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)/$(_NAME)
 $(shell mkdir -p $(DST_DIR))
 
@@ -60,7 +59,7 @@ ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH)-$(_NAME).a
 OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
 LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions
 LINKAGE   = $(OBJS) \
-  $(addsuffix -$(ARCH).a, $(join \
+  $(addsuffix -$(ARCH)-$(_NAME).a, $(join \
     $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
     $(LIBS) ))
 
