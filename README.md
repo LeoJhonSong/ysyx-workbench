@@ -39,7 +39,7 @@ riscv64-linux-gnu-objdump build/riscv64-nemu/tests/dummy.o -D
 
 ### docker
 
-运行`docker-compose-up.sh`来创建/启动一个基于[Arch Linux](https://hub.docker.com/r/archlinux/archlinux/)的支持图形界面的ysyx-workbench用容器.
+运行`docker/run_ysyx_workbench_container.sh`来创建/启动一个基于[Arch Linux](https://hub.docker.com/r/archlinux/archlinux/)的支持图形界面的ysyx-workbench用容器.
 
 根目录下文件会挂载到容器中`/home/student/ysyx-workbench`下
 

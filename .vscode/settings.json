@@ -11,9 +11,6 @@
                 "zsh"
             ]
         },
-        "zsh": {
-            "path": "zsh",
-        }
     },
     "cSpell.words": [
         "addi",
